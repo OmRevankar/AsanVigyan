@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const adminSchema = new mongoose.Schema(
     {
+        fullName : {
+            type : String,
+            required : true
+        },
+
         username : {
             type : String,
             required : true,
@@ -15,7 +20,8 @@ const adminSchema = new mongoose.Schema(
         },
 
         profileImage : {
-            type : String
+            type : String,
+            required:true
         },
 
         refreshToken : {
@@ -46,7 +52,8 @@ adminSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {
             _id : this._id,
-            username : this.username
+            username : this.username,
+            fullName : this.fullName
         },
         process.env.ACCESS_TOKEN_SECRET
         ,

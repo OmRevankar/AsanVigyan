@@ -12,6 +12,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 // updateProfileImage
 // logout
 // fetchUser
+// fetch all users
 
 const startSession = async (user_id) => {
 
