@@ -1,10 +1,11 @@
 
-import { User } from "../models/user.models";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.models.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import fs from "fs";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
-import { ApiResponse } from "../utils/ApiResponse";
+import bcrypt from 'bcrypt'
 
 // register
 // login
@@ -43,6 +44,8 @@ const registerUser = asyncHandler(async (req,res) => {
         fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400,"Details are missing"));
     }
+
+    // console.log(typeof(phone))
 
     const existingUser = await User.findOne({
         $or : [{username},{phone},{email}]
@@ -93,10 +96,13 @@ const loginUser = asyncHandler(async (req,res) => {
 
     const {username,phone,email,password} = req.body;
 
-    if([username,phone,email,password].some((item) => !item || item.trim() === ""))
+    if([username,email,password].some((item) => !item || item.trim() === ""))
     {
-        return res.status(400).jsone(new ApiError(400,"Details are missing"))
+        return res.status(400).json(new ApiError(400,"Details are missing"))
     }
+
+    if(!phone)
+        return res.status(400).json(new ApiError(400,"Phone number missing"));
 
     const user = await User.findOne({
         $and : [{username},{email},{phone}]
@@ -112,7 +118,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
     const userInstance = await User.findById(user?._id).select("-password -refreshToken");
 
-    const {accessToken,refreshToken} = startSession(userInstance?._id);
+    const {accessToken,refreshToken} = await startSession(userInstance?._id);
 
     const options = {
         httpOnly : true,
@@ -167,7 +173,7 @@ const updateUser = asyncHandler(async (req,res) => {
 
     const findUser = await User.findOne({ username });
 
-    if(findUser)
+    if(findUser && username != req.user?.username)
     {
         fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400,"Username is not available"));
@@ -186,10 +192,13 @@ const updateUser = asyncHandler(async (req,res) => {
         return res.status(400).json(new ApiError(400,"Failed to upload on cloudinary"));
     }
 
-    const deleteRes = await deleteFromCloudinary(req.user?.profileImage);
+    const cloudinaryPublicId = req.user?.profileImage.split('/');
+    const deleteRes = await deleteFromCloudinary( cloudinaryPublicId[ cloudinaryPublicId.length - 1 ].split('.')[0] );
 
     if(!deleteRes)
         console.log("Failed to Delete the old image from Cloudinary");
+
+    const hashedPassword = bcrypt.hashSync(password,10);
 
     const updatedUser = await User.findByIdAndUpdate(
         req.user?._id,
@@ -197,7 +206,7 @@ const updateUser = asyncHandler(async (req,res) => {
             $set : {
                 fullName,
                 username,
-                password,
+                hashedPassword,
                 profileImage : uploadRes?.url
             }
         },

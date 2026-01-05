@@ -1,10 +1,11 @@
 
-import { Admin } from "../models/admin.models";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
 import fs from 'fs'
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary";
-import { ApiResponse } from "../utils/ApiResponse";
+import bcrypt from 'bcrypt'
+import { Admin } from "../models/admin.models.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 //create
 // login
@@ -90,27 +91,29 @@ const loginAdmin = asyncHandler(async (req,res) => {
         return res.status(400).json(new ApiError(400,"Incomplete Details"));
     }
 
-    const admin = await Admin.findOne({username}).select("-password -refreshToken");
+    const admin = await Admin.findOne({username});
 
     if(!admin)
         return res.status(400).json(new ApiError(400,"Admin with this Username doesn't exists"));
 
-    const resp = admin.isPasswordCorrect(password);
+    const resp = await admin.isPasswordCorrect(password);
 
     if(!resp)
         return res.status(400).json(new ApiError(400,"Incorrect Password"));
 
-    const {accessToken,refreshToken} = startSession(admin?._id);
+    const {accessToken,refreshToken} = await startSession(admin?._id);
 
     const options = {
         httpOnly : true,
         secure : true
     };
 
+    const adminData = await Admin.findById(admin?._id).select("-password -refreshToken");
+
     return res.status(200)
     .cookie("accessToken",accessToken,options)
     .cookie("refreshToken",refreshToken,options)
-    .json(new ApiResponse(200,admin,"Admin logged in successfully"));
+    .json(new ApiResponse(200,adminData,"Admin logged in successfully"));
 
 });
 
@@ -126,7 +129,7 @@ const updateAdmin = asyncHandler(async (req,res) => {
 
     const exisitingAdmin = await Admin.findOne({username});
 
-    if(exisitingAdmin)
+    if(exisitingAdmin && username != req.admin?.username)
     {
         fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400,"Username cant be used"));
@@ -138,7 +141,8 @@ const updateAdmin = asyncHandler(async (req,res) => {
         return res.status(400).json(new ApiError(400,"Profile Image is required"));
 
     
-    const deleteResp = await deleteFromCloudinary(req.user?.profileImage);
+    const cloudinaryPublicId = req.admin?.profileImage.split('/');
+    const deleteResp = await deleteFromCloudinary(cloudinaryPublicId[cloudinaryPublicId.length - 1].split('.')[0]);
 
     if(!deleteResp)
         console.log("Failed to delete image from cloudinary");
@@ -148,13 +152,15 @@ const updateAdmin = asyncHandler(async (req,res) => {
     if(!uploadResp)
         return res.status(400).json(new ApiError(400,"Failed to upload image on cloudinary"));
 
+    const hashedPassword = bcrypt.hashSync(password,10);
+
     const admin = await Admin.findByIdAndUpdate(
         req.admin?._id,
         {
             $set : {
                 fullName,
                 username,
-                password,
+                hashedPassword,
                 profileImage : uploadResp?.url
             }
         },
