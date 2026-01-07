@@ -28,10 +28,12 @@ import userRouter from './routes/user.routes.js'
 import adminRouter from "./routes/admin.routes.js";
 import questionRouter from "./routes/question.routes.js";
 import testRouter from "./routes/test.routes.js";
+import leaderboardRouter from "./routes/leaderboard.routes.js";
 
 app.use('/api/v1/user',userRouter);
 app.use('/api/v1/admin',adminRouter);
 app.use('/api/v1/question',questionRouter);
-app.use('/api/v1/test',testRouter)
+app.use('/api/v1/test',testRouter);
+app.use('/api/v1/leaderboard',leaderboardRouter)
 
 export default app
