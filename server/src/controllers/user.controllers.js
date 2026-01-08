@@ -37,9 +37,9 @@ const startSession = async (user_id) => {
 
 const registerUser = asyncHandler(async (req,res) => {
 
-    const {fullName , email , phone , password , username , dob} = req.body;
+    const {fullName , password , username , dob} = req.body;
 
-    if([fullName , email , phone , password , username , dob].some( (a) => !a || a.trim() === "" )){
+    if([fullName , password , username , dob].some( (a) => !a || a.trim() === "" )){
 
         fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400,"Details are missing"));
@@ -47,14 +47,12 @@ const registerUser = asyncHandler(async (req,res) => {
 
     // console.log(typeof(phone))
 
-    const existingUser = await User.findOne({
-        $or : [{username},{phone},{email}]
-    })
+    const existingUser = await User.findOne({username})
 
     if(existingUser)
     {
         fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"User with similar username , phone or email already exits"));
+        return res.status(400).json(new ApiError(400,"User with same username already exits"));
     }
 
     const profileImageLocalPath = req.file?.path;
@@ -71,8 +69,6 @@ const registerUser = asyncHandler(async (req,res) => {
     const user = await User.create({
         fullName,
         username,
-        email,
-        phone,
         password,
         dob,
         profileImage : cloudinaryResp?.url
@@ -94,19 +90,17 @@ const registerUser = asyncHandler(async (req,res) => {
 
 const loginUser = asyncHandler(async (req,res) => {
 
-    const {username,phone,email,password} = req.body;
+    const {username,password} = req.body;
 
-    if([username,email,password].some((item) => !item || item.trim() === ""))
+    if([username,password].some((item) => !item || item.trim() === ""))
     {
         return res.status(400).json(new ApiError(400,"Details are missing"))
     }
 
-    if(!phone)
-        return res.status(400).json(new ApiError(400,"Phone number missing"));
+    // if(!phone)
+    //     return res.status(400).json(new ApiError(400,"Phone number missing"));
 
-    const user = await User.findOne({
-        $and : [{username},{email},{phone}]
-    });
+    const user = await User.findOne({username});
 
     if(!user)
         return res.status(400).json(new ApiError(400,"User with the details does not exist"));

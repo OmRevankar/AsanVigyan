@@ -10,12 +10,12 @@ const userSchema = new mongoose.Schema(
             index:true
         },
 
-        email : {
-            type:String,
-            required:true,
-            unique:true,
-            lowercase:true
-        },
+        // email : {
+        //     type:String,
+        //     required:true,
+        //     unique:true,
+        //     lowercase:true
+        // },
 
         username:{
             type:String,
@@ -25,11 +25,11 @@ const userSchema = new mongoose.Schema(
             index:true
         },
 
-        phone : {
-            type : Number,
-            required : true,
-            unique : true
-        },
+        // phone : {
+        //     type : Number,
+        //     required : true,
+        //     unique : true
+        // },
 
         profileImage:{
             type:String,

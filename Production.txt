@@ -1,5 +1,6 @@
 1.change 0.0.0.0/0 network access in the DB
 2.Need new Google acc from AsanVigyan to host MongoDB , Cloudinary , Render
+3.Change backend url in client helper/constants.js
 
 TESTING
 
