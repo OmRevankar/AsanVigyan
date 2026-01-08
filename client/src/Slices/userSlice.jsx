@@ -4,8 +4,10 @@ import toast from 'react-hot-toast';
 
 const initialState = {
     userData : {},
-    isLoading : false
+    isLoading : false,
+    isAuthenticated : false
 };
+
 
 //services
 export const registerUser = createAsyncThunk(
@@ -67,6 +69,36 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const fetchUser = createAsyncThunk(
+    '/user/fetch',
+
+    async (_, {rejectWithValue}) => {
+
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/user/fetch`,{
+                method : "GET",
+                credentials : "include"
+            });
+
+            const response = await resp.json();
+
+            //no token present, expired token , or some error
+            if(response.statusCode !== 200)
+            {
+                return rejectWithValue(response.message || "Failed to Fetch User Details");
+            }
+
+            return response;
+            
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to Fetch User Details");
+        }
+
+    }
+)
+
 const userSlice = createSlice({
     name : "user",
     initialState,
@@ -95,8 +127,27 @@ const userSlice = createSlice({
         .addCase(loginUser.fulfilled , (state,action) => {
             state.isLoading = false;
             state.userData = action.payload.data;
-            localStorage.setItem("isLoggedIn",true);
+            // localStorage.setItem("isLoggedIn","true");
+            state.isAuthenticated = true;
             toast.success(action.payload.message || "Successfully Logged In")
+        })
+
+        .addCase(fetchUser.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(fetchUser.rejected , (state,action) => {
+            state.isLoading = false;
+            state.userData = {};
+            console.log(action.payload);
+            // localStorage.setItem("isLoggedIn","false");
+            state.isAuthenticated = false;
+        })
+        .addCase(fetchUser.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.userData = action.payload.data;
+            // localStorage.setItem("isLoggedIn", "true");
+            state.isAuthenticated = true
+            toast.success("User logged in Successfully"||action.payload.message)
         })
     }
 });

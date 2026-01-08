@@ -1,34 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import Register from './Pages/Register.jsx'
 import Login from './Pages/Login.jsx'
-import {BrowserRouter as Router , Routes , Route} from 'react-router-dom'
+import {BrowserRouter as Router , Routes , Route, useNavigate} from 'react-router-dom'
 import Home from './Pages/Home.jsx'
 import Game from './Pages/Game.jsx'
 import LeaderboardA from './Pages/LeaderboardA.jsx'
 import LeaderboardC from './Pages/LeaderboardC.jsx'
 import LeaderboardB from './Pages/LeaderboardB.jsx'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchUser } from './Slices/userSlice.jsx'
 
 const App = () => {
 
   const [loggedIn,setLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const authState = useSelector(state => state.user.isAuthenticated);
 
   useEffect(() => {
 
-    let ld = localStorage.getItem("isLoggedIn");
+    dispatch(fetchUser());
 
-    if(ld)
-      setLoggedIn(ld);
-    else
-      setLoggedIn(false);
-
-  }, [])
+  },[])
   
 
   return (
     <Router>
 
       {
-        loggedIn ? 
+        authState ? 
 
         <Routes>
 
