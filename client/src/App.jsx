@@ -12,7 +12,6 @@ import { fetchUser } from './Slices/userSlice.jsx'
 
 const App = () => {
 
-  const [loggedIn,setLoggedIn] = useState(false);
   const dispatch = useDispatch();
   const authState = useSelector(state => state.user.isAuthenticated);
 
@@ -38,6 +37,7 @@ const App = () => {
           <Route path='/leaderboard-a' element={<LeaderboardA />}/>
           <Route path='/leaderboard-b' element={<LeaderboardB />}/>
           <Route path='/leaderboard-c' element={<LeaderboardC />}/>
+          <Route path='*' element={<Home />}/>
   
         </Routes> 
 
@@ -52,6 +52,7 @@ const App = () => {
           <Route path='/leaderboard-a' element={<Login />}/>
           <Route path='/leaderboard-b' element={<Login />}/>
           <Route path='/leaderboard-c' element={<Login />}/>
+          <Route path='*' element={<Home />}/>
 
         </Routes>
       }

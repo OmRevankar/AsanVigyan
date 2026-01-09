@@ -158,12 +158,71 @@ const submitTest = asyncHandler(async (req, res) => {
         uid: 999
     })
 
-    const findTest = await Test.findById(testInstance?._id);
+    const findTest = await Test.aggregate([
+        { $match: { _id : testInstance?._id } },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user"
+            }
+        },
+        {
+            $addFields: {
+                user: { $arrayElemAt: ["$user", 0] }
+            }
+        },
+        {
+            $addFields: {
+                "username": "$user.username"
+            }
+        },
+        {
+            $addFields: {
+                "fullName": "$user.fullName"
+            }
+        },
+        {
+            $unwind: "$responses"
+        },
+        {
+            $lookup: {
+                from: "questions",
+                localField: "responses.uid",
+                foreignField: "uid",
+                as: "question"
+            }
+        },
+        {
+            $unwind: "$question"
+        },
+        {
+            $addFields: {
+                "responses.question": "$question"
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                uid: { $first: "$uid" },
+                createdAt: { $first: "$createdAt" },
+                updatedAt: { $first: "$updatedAt" },
+                score: { $first: "$score" },
+                username: { $first: "$username" },
+                fullName: { $first: "$fullName" },
+                userId: { $first: "$userId" },
+                responses: { $push: "$responses" },
+            }
+        }
 
-    if (!findTest)
-        return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
+    ]);
 
-    return res.status(200).json(new ApiResponse(200, findTest, "Successfully submitted test"))
+
+if (!findTest)
+    return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
+
+return res.status(200).json(new ApiResponse(200, findTest, "Successfully submitted test"))
 
 });
 
@@ -172,7 +231,7 @@ const fetchTest = asyncHandler(async (req, res) => {
     const { uid } = req.body;
 
     const test = await Test.aggregate([
-        { $match: { uid: 1 } },
+        { $match: { uid } },
         {
             $lookup: {
                 from: "users",

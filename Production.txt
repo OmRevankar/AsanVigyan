@@ -1,10 +1,9 @@
 1.change 0.0.0.0/0 network access in the DB
 2.Need new Google acc from AsanVigyan to host MongoDB , Cloudinary , Render
-3.Change backend url in client helper/constants.js
+3.Change backend url in client helper/constants.js anf frontend in .env
+
+4.No reload and back option in Game.jsx
 
 TESTING
 
-1. remove condns from create question and see the error will come from backend if correct option not within 1-4
-2. test "" for number in create question
-3. parsing form data everywhere => coz it always gives String and no Number,etc
 
