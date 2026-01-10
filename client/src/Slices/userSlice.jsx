@@ -169,7 +169,7 @@ const userSlice = createSlice({
         })
         .addCase(fetchUser.fulfilled , (state,action) => {
             state.isLoading = false;
-            state.userData = action.payload.data;
+            state.userData = action.payload.data[0];
             // localStorage.setItem("isLoggedIn", "true");
             state.isAuthenticated = true
             toast.success("User logged in Successfully"||action.payload.message)

@@ -6,6 +6,7 @@ import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js
 import { ApiResponse } from "../utils/ApiResponse.js";
 import fs from "fs";
 import bcrypt from 'bcrypt'
+import { Test } from "../models/test.models.js";
 
 // register
 // login
@@ -214,9 +215,48 @@ const updateUser = asyncHandler(async (req, res) => {
 
 })
 
-const fetchUser = asyncHandler((req, res) => {
+const fetchUser = asyncHandler(async (req, res) => {
 
-    return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
+    // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
+
+    const userData = await Test.aggregate([
+        { $match: { userId: req.user?._id } },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user"
+            }
+        },
+        {
+            $unwind: "$user"
+        },
+        {
+            $sort: {
+                "score": -1,
+                "createdAt": 1
+            }
+        },
+        {
+            $group: {
+                _id: "$userId",
+                totalScore: { $sum: "$score" },
+                highScore: { $first: "$score" },
+                totalAttempts: { $sum: 1 },
+                username: { $first: "$user.username" },
+                fullName: { $first: "$user.fullName" },
+                profileImage: { $first: "$user.profileImage" },
+                dob: { $first: "$user.dob" },
+
+            }
+        }
+    ]);
+
+    if(!userData)
+        return res.status(400).json(new ApiError(400,"Failed to fetch user Data"));
+
+    return res.status(200).json(new ApiResponse(200,userData,'Successfully fetched user details'));
 
 })
 
