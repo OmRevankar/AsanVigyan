@@ -9,6 +9,7 @@ import LeaderboardC from './Pages/LeaderboardC.jsx'
 import LeaderboardB from './Pages/LeaderboardB.jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchUser } from './Slices/userSlice.jsx'
+import Update from './Pages/Update.jsx'
 
 const App = () => {
 
@@ -37,6 +38,7 @@ const App = () => {
           <Route path='/leaderboard-a' element={<LeaderboardA />}/>
           <Route path='/leaderboard-b' element={<LeaderboardB />}/>
           <Route path='/leaderboard-c' element={<LeaderboardC />}/>
+          <Route path='/update' element={<Update />}/>
           <Route path='*' element={<Home />}/>
   
         </Routes> 
@@ -52,6 +54,7 @@ const App = () => {
           <Route path='/leaderboard-a' element={<Login />}/>
           <Route path='/leaderboard-b' element={<Login />}/>
           <Route path='/leaderboard-c' element={<Login />}/>
+          <Route path='/update' element={<Login />}/>
           <Route path='*' element={<Home />}/>
 
         </Routes>

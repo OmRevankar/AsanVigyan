@@ -97,6 +97,31 @@ export const fetchUser = createAsyncThunk(
         }
 
     }
+);
+
+export const updateUser = createAsyncThunk(
+    '/user/update',
+
+    async (data,rejectWithValue) => {
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/user/update`,{
+                method : "PATCH",
+                body : data,
+                credentials : "include"
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to update user");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to update user");
+        }
+    }
 )
 
 const userSlice = createSlice({
@@ -148,6 +173,20 @@ const userSlice = createSlice({
             // localStorage.setItem("isLoggedIn", "true");
             state.isAuthenticated = true
             toast.success("User logged in Successfully"||action.payload.message)
+        })
+
+        .addCase(updateUser.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(updateUser.rejected , (state,action) => {
+            state.isLoading = false;
+            toast.error(action.payload);
+        })
+        .addCase(updateUser.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.userData = action.payload.data;
+            state.isAuthenticated = true;
+            toast.success(action.payload.message);
         })
     }
 });

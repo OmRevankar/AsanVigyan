@@ -4,6 +4,11 @@
 
 4.No reload and back option in Game.jsx
 5.remove self start , keep only autostart
+6.score and result
+
+7.fetch user with test details
+8.update controller
+9.test history
 
 TESTING
 
