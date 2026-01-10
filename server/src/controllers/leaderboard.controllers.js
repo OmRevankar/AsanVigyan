@@ -37,6 +37,9 @@ const totalScore = asyncHandler(async (req, res) => {
             $sort: {
                 lifeTimeScore: -1
             }
+        },
+        {
+            $limit : 10
         }
     ]);
 
@@ -72,6 +75,18 @@ const highScore = asyncHandler(async (req, res) => {
                 score: -1,
                 createdAt: 1
             }
+        },
+        {
+            $project : {
+                uid : 1,
+                username : 1,
+                fullName : 1,
+                score : 1,
+                createdAt : 1
+            }
+        },
+        {
+            $limit : 10
         }
     ]);
 
@@ -108,6 +123,14 @@ const totalAttempts = asyncHandler(async (req, res) => {
                 username: { $first: "$username" },
                 attempts: { $sum: 1 }
             }
+        },
+        {
+            $sort : {
+                attempts : -1
+            }
+        },
+        {
+            $limit : 10
         }
     ]);
 

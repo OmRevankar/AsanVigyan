@@ -3,6 +3,7 @@
 3.Change backend url in client helper/constants.js anf frontend in .env
 
 4.No reload and back option in Game.jsx
+5.remove self start , keep only autostart
 
 TESTING
 
