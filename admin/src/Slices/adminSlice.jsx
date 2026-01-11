@@ -65,6 +65,30 @@ export const fetchAdmin = createAsyncThunk(
 
         }
     }
+);
+
+export const logoutAdmin = createAsyncThunk(
+    '/admin/logout',
+
+    async (_,{rejectWithValue}) => {
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/admin/logout`,{
+                method : "POST",
+                credentials : "include"
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to logout User");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to logout User");
+        }
+    }
 )
 
 const adminSlice = createSlice({
@@ -100,6 +124,20 @@ const adminSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = true;
             state.adminData = action.payload.data;
+            toast.success(action.payload.message);
+        })
+
+        .addCase(logoutAdmin.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(logoutAdmin.rejected , (state,action) => {
+            state.isLoading = false;
+            toast.error(action.payload);
+        })
+        .addCase(logoutAdmin.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.isAuthenticated = false;
+            state.adminData = {};
             toast.success(action.payload.message);
         })
     }

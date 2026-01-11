@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import Login from './Pages/Login';
 import { useEffect } from 'react';
 import { fetchAdmin } from './Slices/adminSlice';
+import Profile from './Pages/Profile';
 
 const App = () => {
 
@@ -25,11 +26,13 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Home />} />
+          <Route path='/profile' element={<Profile />} />
         </Routes>
         : 
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/profile' element={<Login />} />
         </Routes>
       }
     </Router>
