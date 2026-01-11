@@ -159,7 +159,7 @@ const submitTest = asyncHandler(async (req, res) => {
     })
 
     const findTest = await Test.aggregate([
-        { $match: { _id : testInstance?._id } },
+        { $match: { _id: testInstance?._id } },
         {
             $lookup: {
                 from: "users",
@@ -219,10 +219,10 @@ const submitTest = asyncHandler(async (req, res) => {
     ]);
 
 
-if (!findTest)
-    return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
+    if (!findTest)
+        return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
 
-return res.status(200).json(new ApiResponse(200, findTest, "Successfully submitted test"))
+    return res.status(200).json(new ApiResponse(200, findTest, "Successfully submitted test"))
 
 });
 
@@ -353,9 +353,57 @@ const fetchAll = asyncHandler(async (req, res) => {
 
 })
 
+const fetchUserTestHistory = asyncHandler(async (req, res) => {
+
+    const userId = req.user?._id;
+
+    const testHistory = await Test.aggregate([
+        { $match: { userId } },
+        {
+            $unwind: "$responses"
+        },
+        {
+            $lookup: {
+                from: "questions",
+                localField: "responses.uid",
+                foreignField: "uid",
+                as: "question"
+            }
+        },
+        {
+            $unwind: "$question"
+        },
+        {
+            $addFields: {
+                "responses.question": "$question"
+            }
+        },
+        {
+            $group: {
+                _id: "$uid",
+                responses: { $push: "$responses" },
+                score: { $first: "$score" },
+                createdAt: { $first: "$createdAt" }
+            }
+        },
+        {
+            $sort: {
+                createdAt: 1
+            }
+        }
+    ])
+
+    if(!testHistory)
+        return res.status(400).json(new ApiError(400, "Failed to fetch the test history"));
+
+    return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
+
+})
+
 export {
     beginTest,
     submitTest,
     fetchTest,
-    fetchAll
+    fetchAll,
+    fetchUserTestHistory
 }

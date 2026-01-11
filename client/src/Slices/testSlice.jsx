@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 const initialState = {
     testData : {},
     questionData : [],
+    testHistory : [],
     isLoading : true
 };
 
