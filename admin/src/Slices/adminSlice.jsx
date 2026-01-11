@@ -89,6 +89,31 @@ export const logoutAdmin = createAsyncThunk(
             return rejectWithValue(error.message || "Failed to logout User");
         }
     }
+);
+
+export const updateAdmin = createAsyncThunk(
+    '/admin/update',
+
+    async (data,{rejectWithValue}) => {
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/admin/update`,{
+                method : "PATCH",
+                body : data,
+                credentials : "include",
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to update user");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to update user");
+        }
+    }
 )
 
 const adminSlice = createSlice({
@@ -138,6 +163,19 @@ const adminSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = false;
             state.adminData = {};
+            toast.success(action.payload.message);
+        })
+
+        .addCase(updateAdmin.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(updateAdmin.rejected , (state,action) => {
+            state.isLoading = false;
+            toast.error(action.payload);
+        })
+        .addCase(updateAdmin.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.adminData = action.payload.data;
             toast.success(action.payload.message);
         })
     }

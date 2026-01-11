@@ -2,6 +2,7 @@
 2.Need new Google acc from AsanVigyan to host MongoDB , Cloudinary , Render
 3.Change backend url in client helper/constants.js anf frontend in .env
 4.remove unnecessary toast and logs
+5. all access from 2 origins in backend
 
 4.No reload and back option in Game.jsx
 5.remove self start , keep only autostart

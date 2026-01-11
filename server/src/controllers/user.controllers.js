@@ -43,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if ([fullName, password, username, dob].some((a) => !a || a.trim() === "")) {
 
-        fs.unlinkSync(req.file?.path);
+        if(req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "Details are missing"));
     }
 
@@ -52,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const existingUser = await User.findOne({ username })
 
     if (existingUser) {
-        fs.unlinkSync(req.file?.path);
+        if(req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "User with same username already exits"));
     }
 
@@ -160,14 +160,14 @@ const updateUser = asyncHandler(async (req, res) => {
     const { fullName, username, password } = req.body;
 
     if ([fullName, username].some((a) => !a || a.trim() === "")) {
-        fs.unlinkSync(req.file?.path);
+        if(req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json("Incomplete details");
     }
 
     const findUser = await User.findOne({ username });
 
     if (findUser && username != req.user?.username) {
-        fs.unlinkSync(req.file?.path);
+        if(req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "Username is not available"));
     }
 

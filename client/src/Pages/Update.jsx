@@ -47,7 +47,7 @@ const Update = () => {
 
     formData.append("fullName",data.fullName);
     formData.append("username",data.username);
-    formData.append("profileImage",data.profileImage);
+    formData.append("profileImage",data.profileImage[0]);
     formData.append("password",data.password);
 
     dispatch(updateUser(formData))
