@@ -388,7 +388,7 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
         },
         {
             $sort: {
-                createdAt: 1
+                createdAt: -1
             }
         }
     ])

@@ -122,6 +122,30 @@ export const updateUser = createAsyncThunk(
             return rejectWithValue(error.message || "Failed to update user");
         }
     }
+);
+
+export const logoutUser = createAsyncThunk(
+    '/user/logout',
+
+    async (_,rejectWithValue) => {
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/user/logout`,{
+                method : "POST",
+                credentials : "include"
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to Logout user");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to Logout user");
+        }
+    }
 )
 
 const userSlice = createSlice({
@@ -186,6 +210,20 @@ const userSlice = createSlice({
             state.isLoading = false;
             state.userData = action.payload.data;
             state.isAuthenticated = true;
+            toast.success(action.payload.message);
+        })
+
+        .addCase(logoutUser.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(logoutUser.rejected , (state,action) => {
+            state.isLoading = false;
+            toast.error(action.payload);
+        })
+        .addCase(logoutUser.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.userData = {};
+            state.isAuthenticated = false;
             toast.success(action.payload.message);
         })
     }

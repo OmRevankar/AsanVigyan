@@ -7,6 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import fs from "fs";
 import bcrypt from 'bcrypt'
 import { Test } from "../models/test.models.js";
+import mongoose from "mongoose";
 
 // register
 // login
@@ -258,12 +259,65 @@ const fetchUser = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200,userData,'Successfully fetched user details'));
 
-})
+});
+
+const fetchOtherUser = asyncHandler(async (req, res) => {
+
+    // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
+    const {userId} = req.body;
+
+    if(!userId || userId.trim() == "")
+        return res.status(400).json(new ApiError(400,"userId required"));
+
+    const user = new mongoose.Types.ObjectId(userId);
+
+    const userData = await Test.aggregate([
+        { $match: { userId : user } },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user"
+            }
+        },
+        {
+            $unwind: "$user"
+        },
+        {
+            $sort: {
+                "score": -1,
+                "createdAt": 1
+            }
+        },
+        {
+            $group: {
+                _id: "$userId",
+                totalScore: { $sum: "$score" },
+                highScore: { $first: "$score" },
+                totalAttempts: { $sum: 1 },
+                username: { $first: "$user.username" },
+                fullName: { $first: "$user.fullName" },
+                profileImage: { $first: "$user.profileImage" },
+                dob: { $first: "$user.dob" },
+
+            }
+        }
+    ]);
+
+    if(!userData)
+        return res.status(400).json(new ApiError(400,"Failed to fetch user Data"));
+
+    return res.status(200).json(new ApiResponse(200,userData,'Successfully fetched user details'));
+
+});
+
 
 export {
     registerUser,
     loginUser,
     logoutUser,
     updateUser,
-    fetchUser
+    fetchUser,
+    fetchOtherUser
 }

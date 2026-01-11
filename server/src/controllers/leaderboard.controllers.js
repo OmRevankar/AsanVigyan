@@ -23,7 +23,8 @@ const totalScore = asyncHandler(async (req, res) => {
         {
             $addFields: {
                 username: "$user.username",
-                fullName: "$user.fullName"
+                fullName: "$user.fullName",
+                userId : "$user._id"
             }
         },
         {
@@ -67,7 +68,7 @@ const highScore = asyncHandler(async (req, res) => {
         {
             $addFields: {
                 username: "$user.username",
-                fullName: "$user.fullName"
+                fullName: "$user.fullName",
             }
         },
         {
@@ -82,7 +83,8 @@ const highScore = asyncHandler(async (req, res) => {
                 username : 1,
                 fullName : 1,
                 score : 1,
-                createdAt : 1
+                createdAt : 1,
+                userId : 1
             }
         },
         {

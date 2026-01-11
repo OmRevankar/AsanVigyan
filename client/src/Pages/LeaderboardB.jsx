@@ -3,11 +3,15 @@ import LeaderboardHead from '../Components/LeaderboardHead'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react';
 import { totalScore } from '../Slices/leaderboardSlice';
+import { useNavigate } from 'react-router-dom';
 
 const LeaderboardB = () => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const leaderboard = useSelector(state => state.leaderboard.totalScore);
+
+  // console.log(leaderboard)
 
   useEffect(()=>{
 
@@ -27,7 +31,7 @@ const LeaderboardB = () => {
           return (
             <div className='flex flex-row gap-10'>
               <div>{item.uid}</div>
-              <div>{item.username}</div>
+              <div onClick={() => {navigate(`/u/${item._id}`)}}>{item.username}</div>
               <div>{item.lifeTimeScore}</div>
             </div>
           )

@@ -69,7 +69,31 @@ export const submitTest = createAsyncThunk(
         }
 
     }
-)
+);
+
+export const fetchUserTestHistory =  createAsyncThunk(
+    '/test/fetch-user-test-history',
+
+    async (_,rejectWithValue) => {
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/test/fetch-user-test-history`,{
+                method : "GET",
+                credentials : "include"
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to fetch User Test History");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to fetch User Test History");
+        }
+    }
+);
 
 const testSlice = createSlice({
     name : "test",
@@ -100,6 +124,20 @@ const testSlice = createSlice({
         .addCase(submitTest.fulfilled,(state,action) => {
             state.isLoading = false;
             state.testData = action.payload.data;
+            toast.success(action.payload.message);
+        })
+
+        .addCase(fetchUserTestHistory.pending,(state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(fetchUserTestHistory.rejected,(state,action) => {
+            state.isLoading = false;
+            state.testHistory = [];
+            toast.error(action.payload);
+        })
+        .addCase(fetchUserTestHistory.fulfilled,(state,action) => {
+            state.isLoading = false;
+            state.testHistory = action.payload.data;
             toast.success(action.payload.message);
         })
     }

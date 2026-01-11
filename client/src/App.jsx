@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchUser } from './Slices/userSlice.jsx'
 import Update from './Pages/Update.jsx'
 import Profile from './Pages/Profile.jsx'
+import VisitUser from './Pages/VisitUser.jsx'
 
 const App = () => {
 
@@ -41,6 +42,7 @@ const App = () => {
           <Route path='/leaderboard-c' element={<LeaderboardC />}/>
           <Route path='/update' element={<Update />}/>
           <Route path='/profile' element={<Profile />}/>
+          <Route path='/u/:userId' element={<VisitUser />}/>
           <Route path='*' element={<Home />}/>
   
         </Routes> 
@@ -58,6 +60,7 @@ const App = () => {
           <Route path='/leaderboard-c' element={<Login />}/>
           <Route path='/update' element={<Login />}/>
           <Route path='/profile' element={<Login />}/>
+          <Route path='/u/:userId' element={<Login />}/>
           <Route path='*' element={<Home />}/>
 
         </Routes>
