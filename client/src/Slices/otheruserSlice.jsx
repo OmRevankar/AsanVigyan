@@ -10,7 +10,7 @@ const initialState = {
 export const fetchOtherUser = createAsyncThunk(
     '/otheruser/fetch',
 
-    async (data , rejectWithValue) => {
+    async (data , {rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/user/fetch-other-user`,{

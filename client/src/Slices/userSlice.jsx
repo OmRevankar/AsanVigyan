@@ -102,7 +102,7 @@ export const fetchUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
     '/user/update',
 
-    async (data,rejectWithValue) => {
+    async (data,{rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/user/update`,{
@@ -127,7 +127,7 @@ export const updateUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
     '/user/logout',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/user/logout`,{

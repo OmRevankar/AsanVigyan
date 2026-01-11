@@ -1,14 +1,14 @@
 1.change 0.0.0.0/0 network access in the DB
 2.Need new Google acc from AsanVigyan to host MongoDB , Cloudinary , Render
 3.Change backend url in client helper/constants.js anf frontend in .env
+4.remove unnecessary toast and logs
 
 4.No reload and back option in Game.jsx
 5.remove self start , keep only autostart
 6.score and result
 
-7.fetch user with test details
-8.update controller
-9.test history
+7.test history ui
+8.Proper authentication => after expiry of tokens wagera paleche asa
 
 TESTING
 

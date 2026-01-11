@@ -13,7 +13,7 @@ const initialState = {
 export const highScore = createAsyncThunk(
     '/leaderboard/high-score',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
 
         try {
             
@@ -39,7 +39,7 @@ export const highScore = createAsyncThunk(
 export const totalScore = createAsyncThunk(
     '/leaderboard/total-score',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/leaderboard/total-score`,{
@@ -64,7 +64,7 @@ export const totalScore = createAsyncThunk(
 export const totalAttempts = createAsyncThunk(
     '/leaderboard/total-attempts',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/leaderboard/total-attempts`,{

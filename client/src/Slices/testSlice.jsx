@@ -13,7 +13,7 @@ const initialState = {
 export const startTest = createAsyncThunk(
     '/test/start',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
 
         try {
             
@@ -74,7 +74,7 @@ export const submitTest = createAsyncThunk(
 export const fetchUserTestHistory =  createAsyncThunk(
     '/test/fetch-user-test-history',
 
-    async (_,rejectWithValue) => {
+    async (_,{rejectWithValue}) => {
         try {
             
             const resp = await fetch(`${BACKEND_URL}/test/fetch-user-test-history`,{
