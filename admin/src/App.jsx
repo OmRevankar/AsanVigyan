@@ -24,15 +24,15 @@ const App = () => {
       {
         isAuth ? 
 
-        <Routes>
+        <Routes>  
           <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Home />} />
+          <Route path='/login' element={<Login />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/update' element={<Update />} />
         </Routes>
         : 
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route path='/' element={<Login />} />
           <Route path='/login' element={<Login />} />
           <Route path='/profile' element={<Login />} />
           <Route path='/update' element={<Login />} />
