@@ -10,10 +10,26 @@ const app = express();
 //static
 //cookie
 
-app.use(cors( {
-    origin:process.env.CORS_ORIGIN,
-    credentials : true,
-} ))
+// app.use(cors( {
+//     origin:process.env.CORS_ORIGIN,
+//     credentials : true,
+// } ))
+
+const allowedOrigins = process.env.CORS_ORIGIN.split(",");
+
+app.use(cors({
+    origin : function(origin,callback){
+
+        if(!origin) callback(null,true);
+
+        if(allowedOrigins.includes(origin)) 
+            callback(null,true);
+        else
+            callback(new Error("Not Allowed by CORS"))
+
+    },
+    credentials: true
+}))
 
 app.use(express.json({limit:"16kb"}))
 

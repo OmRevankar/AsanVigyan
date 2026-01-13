@@ -311,38 +311,42 @@ const fetchAll = asyncHandler(async (req, res) => {
             }
         },
         {
-            $addFields: {
-                user: { $arrayElemAt: ["$user", 0] }
+            $unwind: "$user"
+        },
+        {
+            $unwind: "$responses"
+        },
+        {
+            $lookup: {
+                from: "questions",
+                localField: "responses.uid",
+                foreignField: "uid",
+                as: "question"
             }
         },
         {
-            $addFields: {
-                "username": "$user.username"
-            }
+            $unwind: "$question"
         },
         {
             $addFields: {
-                "fullName": "$user.fullName"
+                "responses.question": "$question"
             }
         },
         {
-            $addFields: {
-                dateAndTime: {
-                    $dateToString: {
-                        date: "$createdAt",
-                        format: "%d %b %Y, %H:%M",
-                        timezone: "Asia/Kolkata"
-                    }
-                }
+            $group: {
+                _id: "$_id",
+                uid : { $first: "$uid" },
+                responses: { $push: "$responses" },
+                createdAt: { $first: "$createdAt" },
+                userId: { $first: "$userId" },
+                username: { $first: "$user.username" },
+                fullName: { $first: "$user.fullName" },
+                score: { $first: "$score" }
             }
         },
         {
-            $project: {
-                uid: 1,
-                username: 1,
-                fullName: 1,
-                score: 1,
-                dateAndTime: 1
+            $sort: {
+                createdAt: -1
             }
         }
     ])
@@ -394,7 +398,7 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
         }
     ])
 
-    if(!testHistory)
+    if (!testHistory)
         return res.status(400).json(new ApiError(400, "Failed to fetch the test history"));
 
     return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
@@ -402,15 +406,15 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
 });
 const fetchUserTestHistoryAdmin = asyncHandler(async (req, res) => {
 
-    const {userId} = req.body;
+    const { userId } = req.body;
 
-    if(!userId || userId.trim() === "")
-        return res.status(400).json(new ApiError(400,"User Id is required"));
+    if (!userId || userId.trim() === "")
+        return res.status(400).json(new ApiError(400, "User Id is required"));
 
     const mongooseUserId = new mongoose.Types.ObjectId(userId);
 
     const testHistory = await Test.aggregate([
-        { $match: { userId : mongooseUserId } },
+        { $match: { userId: mongooseUserId } },
         {
             $unwind: "$responses"
         },
@@ -447,7 +451,7 @@ const fetchUserTestHistoryAdmin = asyncHandler(async (req, res) => {
 
     // console.log(testHistory);
 
-    if(!testHistory)
+    if (!testHistory)
         return res.status(400).json(new ApiError(400, "Failed to fetch the test history"));
 
     return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
