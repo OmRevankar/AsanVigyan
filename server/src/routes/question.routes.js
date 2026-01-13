@@ -8,7 +8,7 @@ const router = Router();
 router.route('/create').post(adminJWT,upload.single("questionImage"),createQuestion);
 router.route('/update').patch(adminJWT , upload.single("questionImage"), updateQuestion);
 router.route('/delete').delete(adminJWT,deleteQuestion);
-router.route('/fetch').get(adminJWT,fetchQuestion);
+router.route('/fetch').post(adminJWT,fetchQuestion);
 router.route('/fetch-all').get(adminJWT,fetchAllQuestions);
 
 export default router;

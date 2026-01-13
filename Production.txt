@@ -11,6 +11,8 @@
 7.test history ui
 8.Proper authentication => after expiry of tokens wagera paleche asa
 
+9.GET responses => change post ---> get
+
 TESTING
 
 

@@ -19,8 +19,11 @@ const createQuestion = asyncHandler( async (req,res) => {
     const parsedCorrectOption = Number(correctOption);
     const parsedValue = Number(value);
 
+    // console.log("hi");
+    // console.log(typeof(options))
     let parsedOptions;
     parsedOptions = typeof(options) == "string" ? JSON.parse(options) : options;
+    console.log("hi");
 
     console.log(typeof(parsedCorrectOption),typeof(parsedValue),typeof(parsedOptions));
     console.log(parsedOptions);
@@ -67,7 +70,7 @@ const createQuestion = asyncHandler( async (req,res) => {
         options : parsedOptions,
         correctOption : parsedCorrectOption,
         value : parsedValue,
-        questionImage : uploadResp?.url,
+        questionImage : uploadResp ? uploadResp?.url : undefined,
         createdBy : req?.admin._id,
         uid : 999
     });

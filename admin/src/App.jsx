@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import { fetchAdmin } from './Slices/adminSlice';
 import Profile from './Pages/Profile';
 import Update from './Pages/Update';
+import QuestionLayout from './Pages/QuestionLayout';
+import CreateQuestion from './Pages/CreateQuestion';
+import UpdateQuestion from './Pages/UpdateQuestion';
 
 const App = () => {
 
@@ -26,9 +29,14 @@ const App = () => {
 
         <Routes>  
           <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<Home />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/update' element={<Update />} />
+          <Route path='/q' element={<QuestionLayout />}>
+            <Route path='create' element={<CreateQuestion />} />
+            <Route path='update/:uid' element={<UpdateQuestion />} />
+          </Route>
+          <Route path='*' element={<Home />} />
         </Routes>
         : 
         <Routes>
@@ -36,6 +44,7 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/profile' element={<Login />} />
           <Route path='/update' element={<Login />} />
+          <Route path='*' element={<Login />} />
         </Routes>
       }
     </Router>

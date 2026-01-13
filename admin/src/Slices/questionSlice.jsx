@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 const initialState = {
     questionData : [],
+    singleQuestion : {},
     isLoading : true
 };
 
@@ -113,6 +114,34 @@ export const deleteQuestion = createAsyncThunk(
     }
 )
 
+export const fetchQuestion  = createAsyncThunk(
+    '/question/fetch',
+
+    async (data,{rejectWithValue}) =>{
+        try {
+            
+            const resp = await fetch(`${BACKEND_URL}/question/fetch`,{
+                method : "POST",
+                credentials : "include",
+                body : JSON.stringify(data),
+                headers : {
+                    "Content-Type" : "application/json"
+                }
+            });
+
+            const response = await resp.json();
+
+            if(response.statusCode !== 200)
+                return rejectWithValue(response.message || "Failed to fetch question");
+
+            return response;
+
+        } catch (error) {
+            return rejectWithValue(error.message || "Failed to fetch question")
+        }
+    }
+)
+
 const questionSlice = createSlice({
     name : 'question',
     initialState,
@@ -141,7 +170,7 @@ const questionSlice = createSlice({
         })
         .addCase(createQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
-            // state.questionData = action.payload.data;
+            state.singleQuestion = action.payload.data;
             toast.success(action.payload.message);
         })
 
@@ -154,7 +183,7 @@ const questionSlice = createSlice({
         })
         .addCase(updateQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
-            // state.questionData = action.payload.data;
+            state.singleQuestion = action.payload.data;
             toast.success(action.payload.message);
         })
 
@@ -167,7 +196,20 @@ const questionSlice = createSlice({
         })
         .addCase(deleteQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
-            // state.questionData = action.payload.data;
+            state.singleQuestion = action.payload.data;
+            toast.success(action.payload.message);
+        })
+
+        .addCase(fetchQuestion.pending , (state,action) => {
+            state.isLoading = true;
+        })
+        .addCase(fetchQuestion.rejected , (state,action) => {
+            state.isLoading = false;
+            toast.error(action.payload);
+        })
+        .addCase(fetchQuestion.fulfilled , (state,action) => {
+            state.isLoading = false;
+            state.singleQuestion = action.payload.data;
             toast.success(action.payload.message);
         })
     }
