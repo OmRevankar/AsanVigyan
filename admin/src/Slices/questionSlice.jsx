@@ -92,7 +92,7 @@ export const deleteQuestion = createAsyncThunk(
         try {
             
             const resp = await fetch(`${BACKEND_URL}/question/delete`,{
-                method : "POST",
+                method : "DELETE",
                 body : JSON.stringify(data),
                 credentials : "include",
                 headers : {

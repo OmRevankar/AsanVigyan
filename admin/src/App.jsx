@@ -10,6 +10,7 @@ import Update from './Pages/Update';
 import QuestionLayout from './Pages/QuestionLayout';
 import CreateQuestion from './Pages/CreateQuestion';
 import UpdateQuestion from './Pages/UpdateQuestion';
+import Questions from './Pages/Questions';
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
           <Route path='/q' element={<QuestionLayout />}>
             <Route path='create' element={<CreateQuestion />} />
             <Route path='update/:uid' element={<UpdateQuestion />} />
+            <Route path='all-questions' element={<Questions />} />
           </Route>
           <Route path='*' element={<Home />} />
         </Routes>
