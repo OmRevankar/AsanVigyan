@@ -3,6 +3,7 @@
 // fetch
 // fetchAll
 
+import mongoose from "mongoose";
 import { Question } from "../models/question.models.js";
 import { Test } from "../models/test.models.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -398,12 +399,66 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
 
-})
+});
+const fetchUserTestHistoryAdmin = asyncHandler(async (req, res) => {
+
+    const {userId} = req.body;
+
+    if(!userId || userId.trim() === "")
+        return res.status(400).json(new ApiError(400,"User Id is required"));
+
+    const mongooseUserId = new mongoose.Types.ObjectId(userId);
+
+    const testHistory = await Test.aggregate([
+        { $match: { userId : mongooseUserId } },
+        {
+            $unwind: "$responses"
+        },
+        {
+            $lookup: {
+                from: "questions",
+                localField: "responses.uid",
+                foreignField: "uid",
+                as: "question"
+            }
+        },
+        {
+            $unwind: "$question"
+        },
+        {
+            $addFields: {
+                "responses.question": "$question"
+            }
+        },
+        {
+            $group: {
+                _id: "$uid",
+                responses: { $push: "$responses" },
+                score: { $first: "$score" },
+                createdAt: { $first: "$createdAt" }
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ]);
+
+    // console.log(testHistory);
+
+    if(!testHistory)
+        return res.status(400).json(new ApiError(400, "Failed to fetch the test history"));
+
+    return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
+
+});
 
 export {
     beginTest,
     submitTest,
     fetchTest,
     fetchAll,
-    fetchUserTestHistory
+    fetchUserTestHistory,
+    fetchUserTestHistoryAdmin
 }

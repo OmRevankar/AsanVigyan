@@ -13,12 +13,16 @@ const initialState = {
 export const fetchUserTestHistory =  createAsyncThunk(
     '/test/fetch-user-test-history',
 
-    async (_,{rejectWithValue}) => {
+    async (data,{rejectWithValue}) => {
         try {
             
-            const resp = await fetch(`${BACKEND_URL}/test/fetch-user-test-history`,{
-                method : "GET",
-                credentials : "include"
+            const resp = await fetch(`${BACKEND_URL}/test/fetch-user-test-history-ad`,{
+                method : "POST",
+                credentials : "include",
+                body : JSON.stringify(data),
+                headers : {
+                    "Content-Type" : 'application/json'
+                }
             });
 
             const response = await resp.json();
@@ -97,7 +101,7 @@ const testSlice = createSlice({
         })
         .addCase(fetchUserTestHistory.rejected,(state,action) => {
             state.isLoading = false;
-            state.userTestHistory = [];
+            // state.userTestHistory = [];
             toast.error(action.payload);
         })
         .addCase(fetchUserTestHistory.fulfilled,(state,action) => {
