@@ -11,6 +11,10 @@ import QuestionLayout from './Pages/QuestionLayout';
 import CreateQuestion from './Pages/CreateQuestion';
 import UpdateQuestion from './Pages/UpdateQuestion';
 import Questions from './Pages/Questions';
+import LeaderboardA from './Pages/LeaderboardA';
+import LeaderboardB from './Pages/LeaderboardB';
+import LeaderboardC from './Pages/LeaderboardC';
+import User from './Pages/User';
 
 const App = () => {
 
@@ -38,6 +42,10 @@ const App = () => {
             <Route path='update/:uid' element={<UpdateQuestion />} />
             <Route path='all-questions' element={<Questions />} />
           </Route>
+          <Route path='/leaderboard-a' element={<LeaderboardA />} />
+          <Route path='/leaderboard-b' element={<LeaderboardB />} />
+          <Route path='/leaderboard-c' element={<LeaderboardC />} />
+          <Route path='/u/:userId' element={<User />}/>
           <Route path='*' element={<Home />} />
         </Routes>
         : 
@@ -46,6 +54,10 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/profile' element={<Login />} />
           <Route path='/update' element={<Login />} />
+          <Route path='/leaderboard-a' element={<Login />} />
+          <Route path='/leaderboard-b' element={<Login />} />
+          <Route path='/leaderboard-c' element={<Login />} />
+          <Route path='/u/:userId' element={<User />}/>
           <Route path='*' element={<Login />} />
         </Routes>
       }

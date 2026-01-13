@@ -13,6 +13,6 @@ router.route('/logout').post(verifyJWT,logoutUser);
 router.route('/fetch-other-user').post(verifyJWT,fetchOtherUser);
 
 
-router.route('/fetch-user-a').get(adminJWT,fetchOtherUser);
+router.route('/fetch-user-a').post(adminJWT,fetchOtherUser);
 
 export default router

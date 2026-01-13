@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logoutAdmin } from '../Slices/adminSlice';
+import Navbar from '../Components/Navbar';
 
 const LogoutDialogue = (props) => {
 
@@ -47,6 +48,8 @@ const Profile = () => {
 
     return (
         <div>
+            <Navbar />
+
             <div>
                 <img src={adminData.profileImage} alt="" />
                 <div>{adminData.fullName}</div>

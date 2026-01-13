@@ -51,7 +51,7 @@ const userSlice = createSlice({
         })
         .addCase(fetchUser.fulfilled , (state,action) => {
             state.isLoading = true;
-            state.userData = action.payload.data;
+            state.userData = action.payload.data[0];
             toast.success(action.payload.message);
         })
     }
