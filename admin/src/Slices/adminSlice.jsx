@@ -143,6 +143,7 @@ const adminSlice = createSlice({
         .addCase(loginAdmin.rejected , (state,action) => {
             state.isLoading = false;
             state.isAuthenticated = false;
+            toast.error(action.payload);
             console.error(action.payload);
         })
         .addCase(loginAdmin.fulfilled , (state,action) => {
