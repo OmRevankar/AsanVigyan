@@ -2,14 +2,13 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../Slices/userSlice';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { Lock, User, Loader2 } from 'lucide-react'; // Icons for professional touch
 
 const Login = () => {
-
     const {
         register,
         handleSubmit,
-        watch,
         reset,
         formState: { errors, isSubmitting }
     } = useForm();
@@ -18,61 +17,110 @@ const Login = () => {
     const navigate = useNavigate();
 
     const onSubmit = (data) => {
-
-        
         const formData = {
-            "username" : data.username,
-            "password" : data.password
+            "username": data.username,
+            "password": data.password
         }
         
-        console.log(formData);
-        
         dispatch(loginUser(formData))
-        .unwrap()
-        .then(() => {reset() ; navigate('/')})
-        .catch((err) => {reset() ; console.error(err)})
+            .unwrap()
+            .then(() => {
+                reset();
+                navigate('/');
+            })
+            .catch((err) => {
+                console.error(err)
+            })
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50 px-4">
+            {/* Login Card */}
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-purple-100/50 p-8 border border-slate-100">
+                
+                {/* Header */}
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold text-slate-800">Welcome Back</h2>
+                    <p className="text-slate-500 mt-2 text-sm">Please enter your details to sign in</p>
+                </div>
 
-            <div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    
+                    {/* Username Field */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-700 ml-1">Username</label>
+                        <div className="relative">
+                            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input 
+                                type="text" 
+                                placeholder='Enter Username' 
+                                {...register('username', {
+                                    required: "Username is required",
+                                    pattern: { value: /^[A-Za-z0-9_.]{2,15}$/, message: "Invalid username format" }
+                                })} 
+                                className={`w-full pl-10 pr-4 py-3 rounded-xl border outline-none transition-all duration-200
+                                    ${errors.username 
+                                        ? 'border-red-300 bg-red-50 focus:border-red-500' 
+                                        : 'border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50'}`}
+                            />
+                        </div>
+                        {errors.username && <p className="text-xs text-red-500 font-medium ml-1">{errors.username.message}</p>}
+                    </div>
 
-                <label>Username</label>
+                    {/* Password Field */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input 
+                                type='password' 
+                                placeholder='••••••••'  
+                                {...register('password', {
+                                    required: "Password is required",
+                                    pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, message: "Must be 8+ chars with Symbol & Uppercase" }
+                                })} 
+                                className={`w-full pl-10 pr-4 py-3 rounded-xl border outline-none transition-all duration-200
+                                    ${errors.password 
+                                        ? 'border-red-300 bg-red-50 focus:border-red-500' 
+                                        : 'border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50'}`}
+                            />
+                        </div>
+                        {errors.password && <p className="text-xs text-red-500 font-medium ml-1">{errors.password.message}</p>}
+                    </div>
 
-                <br />
+                    {/* Forgot Password Link (Visual Placeholder) */}
+                    <div className="flex justify-end">
+                        <button type="button" className="text-xs font-semibold text-purple-600 hover:text-purple-700">
+                            Forgot password?
+                        </button>
+                    </div>
 
-                <input type="text" placeholder='Enter Username' {...register('username', {
-                    pattern: { value: /^[A-Za-z0-9_.]{2,15}$/, message: "Username is invalid" }
-                })} />
+                    {/* Submit Button */}
+                    <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-purple-200 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="animate-spin" size={20} />
+                                <span>Signing in...</span>
+                            </>
+                        ) : "Sign In"}
+                    </button>
+                </form>
 
-                {errors.username && <p className='border-2 border-red-900 px-3 py-2 bg-red-400 text-black'>{errors.username.message}</p>}
-
+                {/* Footer */}
+                <div className="mt-8 text-center border-t border-slate-100 pt-6">
+                    <p className="text-sm text-slate-500">
+                        Don't have an account? {' '}
+                        <Link to="/register" className="text-purple-600 font-bold hover:underline">
+                            Create Account
+                        </Link>
+                    </p>
+                </div>
             </div>
-
-            <br />
-
-            <div>
-
-                <label>Password</label>
-
-                <br />
-
-                <input type='password' placeholder='Enter your Password'  {...register('password',
-                    {
-                        pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/ , message: "Invalid password" }
-                    }
-                )} />
-
-                {errors.password && <p className='border-2 border-red-900 px-3 py-2 bg-red-400 text-black'>{errors.password.message}</p>}
-
-            </div>
-
-            <br />
-
-            <input type="submit" value={isSubmitting ? "Submitting" : "Submit"} disabled={isSubmitting} />
-
-        </form>
+        </div>
     )
 }
 

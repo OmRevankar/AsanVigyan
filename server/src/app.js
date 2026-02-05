@@ -20,12 +20,12 @@ const allowedOrigins = process.env.CORS_ORIGIN.split(",");
 app.use(cors({
     origin : function(origin,callback){
 
-        if(!origin) callback(null,true);
+        if(!origin) return callback(null,true);
 
         if(allowedOrigins.includes(origin)) 
-            callback(null,true);
+            return callback(null,true);
         else
-            callback(new Error("Not Allowed by CORS"))
+            return callback(new Error("Not Allowed by CORS"))
 
     },
     credentials: true

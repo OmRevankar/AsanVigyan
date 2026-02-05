@@ -6,7 +6,8 @@ import jwt from 'jsonwebtoken'
 
 const verifyJWT = asyncHandler( async (req,res,next) => {
 
-    const accessToken = req.cookies?.accessToken || req.headers["Authorization"]?.replace("Bearer","");
+    const accessToken = req.headers["authorization"]?.replace("Bearer ","") || req.cookies?.accessToken;
+    // console.log(accessToken);
     
     try {
 
@@ -22,12 +23,16 @@ const verifyJWT = asyncHandler( async (req,res,next) => {
     
         if(!user)
             return res.status(452).json( new ApiError(452,"Expired Access token present in Browser") );
+
+        // console.log(user)
     
         req.user = user;
         next();
 
     } catch (error) {
         
+        // console.log("Error")
+
         if(error.name == "TokenExpiredError")
             return res.status(452).json( new ApiError(452,"Expired Access token present in Browser : TokenExpiredError :)") );
 

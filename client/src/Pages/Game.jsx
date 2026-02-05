@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { startTest, submitTest } from '../Slices/testSlice';
+import { 
+  Timer, AlertCircle, ChevronLeft, ChevronRight, 
+  Send, Info, CheckCircle2, Trophy, Loader2 
+} from 'lucide-react';
 
 const Game = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  //STATES
 
   const GAME_STATE = {
     INSTRUCTION: "instruction",
     TEST: "test",
     REDIRECT: "redirect"
-  }
+  };
 
   const { testData, questionData, isLoading } = useSelector(state => state.test);
 
@@ -22,264 +23,293 @@ const Game = () => {
   const [gameState, setGameState] = useState(GAME_STATE.INSTRUCTION);
   const [index, setIndex] = useState(0);
 
-  const [testTimer, setTestTimer] = useState(10);
+  const [testTimer, setTestTimer] = useState(60); // Set to 60 for better testing, adjust as needed
   const [redirectTimer, setRedirectTimer] = useState(10);
   const [instructionTimer, setInstructionTimer] = useState(10);
 
-  //TIMER
-
-  //instructions timer
+  // --- LOCKDOWN MECHANISM ---
   useEffect(() => {
+    if (gameState === GAME_STATE.TEST) {
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+        e.returnValue = "Test in progress. Leaving will forfeit your score.";
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [gameState]);
 
+  // --- TIMERS ---
+
+  // Instruction Timer
+  useEffect(() => {
     if (gameState !== GAME_STATE.INSTRUCTION) return;
 
-    dispatch(startTest())
-      .unwrap()
-      .then((res) => {
-
-        setResponses(res.data.map((qn, index) => {
-
-          return { uid: qn.uid, selectedOption: 0 };
-
-        }));
-
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-
-
-    console.log(responses);
+    dispatch(startTest()).unwrap().then((res) => {
+      setResponses(res.data.map(qn => ({ uid: qn.uid, selectedOption: 0 })));
+    }).catch(console.error);
 
     const interval = setInterval(() => {
-
       setInstructionTimer(prev => {
-
-        if (prev == 1) {
+        if (prev <= 1) {
           clearInterval(interval);
           setGameState(GAME_STATE.TEST);
           return 0;
         }
-
         return prev - 1;
-
       });
-
     }, 1000);
-
     return () => clearInterval(interval);
+  }, [gameState, dispatch]);
 
-  }, [gameState, dispatch])
-
-  //test timer
+  // Test Timer
   useEffect(() => {
-
     if (gameState !== GAME_STATE.TEST) return;
 
     const interval = setInterval(() => {
-
       setTestTimer(prev => {
-
-        if (prev == 1) {
+        if (prev <= 1) {
           clearInterval(interval);
-
-          //dispatch submit test
-          dispatch(submitTest({ response: responses }));
-
-          setGameState(GAME_STATE.REDIRECT);
+          handleSubmit();
           return 0;
         }
-
         return prev - 1;
-
-      })
-
-    }, 1000);
-
-    return () => clearInterval(interval)
-
-  }, [gameState, dispatch, responses])
-
-
-  //redirect timer
-  useEffect(() => {
-
-    if (gameState !== GAME_STATE.REDIRECT) return;
-
-    const interval = setInterval(() => {
-
-      setRedirectTimer(prev => {
-
-        if (prev == 1) {
-          clearInterval(interval);
-          navigate('/');
-          return 0;
-        }
-
-        return prev - 1;
-
       });
-
-
-    }, 1000)
-
+    }, 1000);
     return () => clearInterval(interval);
+  }, [gameState, responses]);
 
+  // Redirect Timer
+  useEffect(() => {
+    if (gameState !== GAME_STATE.REDIRECT) return;
+    const interval = setInterval(() => {
+      setRedirectTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          navigate('/profile');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
   }, [gameState, navigate]);
 
+  // --- HANDLERS ---
 
-  useEffect(()=> {
-    console.log(responses)
-  },[responses])
+  const handleSubmit = () => {
+    dispatch(submitTest({ response: responses }));
+    setGameState(GAME_STATE.REDIRECT);
+  };
 
-
-  //FUNCTIONS
-
-  //next index
-  const next = () => {
-
-    if (index < questionData.length - 1)
-      setIndex(prev => prev + 1);
-
-  }
-
-  //prev index
-  const prev = () => {
-
-    if (index > 0)
-      setIndex(prev => prev - 1);
-
-  }
-
-  //select option
   const selectOption = (uid, selectedOption) => {
+    setResponses(prev => prev.map(r => r.uid === uid ? { ...r, selectedOption } : r));
+  };
 
-    setResponses(prev => {
+  // --- UI STAGES ---
 
-      const exists = prev.find(r => r.uid === uid)
-
-      if (exists) {
-        return prev.map(r => {
-          return r.uid === uid ? { ...r, selectedOption } : r
-        })
-      }
-
-      return [...prev, { uid, selectedOption }];
-
-    })
-
-  }
-
-  //INTERFACES
-
-  //instruction ui
+  // 1. INSTRUCTION UI
   if (gameState === GAME_STATE.INSTRUCTION) {
-
     return (
-
-      <div>
-
-        <h1>TEST INSTRUCTIONS</h1>
-
-        <h2>Test Starts in {instructionTimer}</h2>
-
-        <div>10 Seconds for test</div>
-        <div>Attempt as many as possible</div>
-        <div>Refreshing window or exiting screen is not permitted once the test begins</div>
-        <div>Score will be generated once test ends</div>
-        <h2>ALL THE BEST</h2>
-
-        <button onClick={() => { setGameState(GAME_STATE.TEST) }}>START TEST</button>
-
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-slate-200/60 p-8 border border-slate-100">
+          <div className="flex flex-col items-center text-center">
+            <div className="size-20 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+              <Info className="text-purple-600 size-10" />
+            </div>
+            <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Test Instructions</h1>
+            <div className="my-6 space-y-3 w-full">
+              {[
+                `Test starts in ${instructionTimer} seconds`,
+                "Attempt as many questions as possible",
+                "Refreshing or exiting will void the test",
+                "Results are generated instantly after submission"
+              ].map((text, i) => (
+                <div key={i} className="flex items-center gap-3 text-left p-3 bg-slate-50 rounded-xl text-slate-600 text-sm font-medium">
+                  <CheckCircle2 size={18} className="text-purple-500" />
+                  {text}
+                </div>
+              ))}
+            </div>
+            <button 
+              onClick={() => setGameState(GAME_STATE.TEST)}
+              className="w-full py-4 bg-purple-600 text-white font-bold rounded-2xl hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all active:scale-[0.98]"
+            >
+              Start Now
+            </button>
+          </div>
+        </div>
       </div>
-
-    )
+    );
   }
 
-  //test ui
+  // 2. TEST UI
   if (gameState === GAME_STATE.TEST) {
-
     if (isLoading || !questionData.length) {
-      return <h1>Loading...</h1>
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+          <Loader2 className="animate-spin text-purple-600 mb-4" size={40} />
+          <p className="font-bold text-slate-400">Syncing with server...</p>
+        </div>
+      );
     }
 
     const qn = questionData[index];
     const selectedOpt = responses.find(r => r.uid === qn.uid)?.selectedOption;
 
     return (
+      <div className="min-h-screen bg-white md:bg-slate-50 flex flex-col">
+        {/* Navbar-style Header */}
+        <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+          <div className="flex items-center gap-4">
+            <div className="px-3 py-1 bg-purple-100 text-purple-600 rounded-lg font-bold text-xs uppercase tracking-widest">
+              Live Test
+            </div>
+            <h2 className="hidden md:block font-bold text-slate-700">Question {index + 1} of {questionData.length}</h2>
+          </div>
 
-      <div>
-
-        <div>Time Left : {testTimer}</div>
-
-        <div>Question {index + 1} / {questionData.length}</div>
-
-        <div>Marks : {qn.value}</div>
-        <div>question id : {qn.uid}</div>
-
-        <div>{qn.description}</div>
-
-        {qn.questionImage && <img src={qn.questionImage} />}
-
-        <div>
-
-          {
-
-            qn.options.map((opt) => {
-              return (
-                <div>
-                  <button key={opt.id} className={selectedOpt === opt.id ? 'bg-green-600' : 'bg-white'} onClick={() => { selectOption(qn.uid, opt.id) }}>
-                    {opt.id}.   {opt.text}
-                  </button>
-
-                  <br />
-                </div>
-              )
-            })
-
-          }
-
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold ${testTimer < 10 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-700'}`}>
+            <Timer size={18} />
+            {Math.floor(testTimer / 60)}:{String(testTimer % 60).padStart(2, '0')}
+          </div>
         </div>
 
-        <button onClick={() => { prev() }} disabled={index === 0} >prev</button>
+        <div className="max-w-5xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 p-6 flex-1">
+          {/* Main Question Area */}
+          <div className="md:col-span-8 flex flex-col gap-6">
+            <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Value: {qn.value} Points</span>
+                <span className="text-xs text-slate-300">ID: {qn.uid}</span>
+              </div>
+              
+              <h3 className="text-xl md:text-2xl font-bold text-slate-800 leading-snug mb-8">
+                {qn.description}
+              </h3>
 
-        <button onClick={() => { next() }} disabled={index === questionData.length - 1}>next</button>
+              {qn.questionImage && (
+                <div className="mb-8 rounded-2xl overflow-hidden border border-slate-100">
+                  <img src={qn.questionImage} alt="Visual aid" className="w-full h-auto max-h-80 object-contain bg-slate-50" />
+                </div>
+              )}
 
-        <button onClick={() => {
-          dispatch(submitTest({ response: responses }));
-          setGameState(GAME_STATE.REDIRECT)
-        }
-        }>submit</button>
+              <div className="space-y-3">
+                {qn.options.map((opt) => (
+                  <button 
+                    key={opt.id} 
+                    onClick={() => selectOption(qn.uid, opt.id)}
+                    className={`w-full text-left p-5 rounded-2xl border-2 transition-all flex items-center justify-between group
+                      ${selectedOpt === opt.id 
+                        ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-md' 
+                        : 'border-slate-100 hover:border-slate-200 bg-white text-slate-600'}`}
+                  >
+                    <span className="font-semibold">{opt.text}</span>
+                    <div className={`size-6 rounded-full border-2 flex items-center justify-center 
+                      ${selectedOpt === opt.id ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-200'}`}>
+                      {selectedOpt === opt.id && <div className="size-2 bg-white rounded-full" />}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
 
+            {/* Navigation Controls */}
+            <div className="flex items-center justify-between mt-auto pb-10">
+              <button 
+                onClick={() => setIndex(prev => prev - 1)} 
+                disabled={index === 0}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-slate-600 disabled:opacity-30 hover:bg-slate-200 transition-colors"
+              >
+                <ChevronLeft size={20} /> Previous
+              </button>
+              
+              <div className="flex gap-2">
+                {index === questionData.length - 1 ? (
+                  <button 
+                    onClick={handleSubmit}
+                    className="flex items-center gap-2 px-8 py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-green-700 transition-all"
+                  >
+                    Submit Test <Send size={18} />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setIndex(prev => prev + 1)}
+                    className="flex items-center gap-2 px-8 py-3 bg-purple-600 text-white font-bold rounded-xl shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all"
+                  >
+                    Next Question <ChevronRight size={18} />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar Navigation */}
+          <div className="md:col-span-4 hidden md:block">
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sticky top-24">
+              <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <AlertCircle size={18} className="text-purple-500" /> Progress
+              </h4>
+              <div className="grid grid-cols-4 gap-2">
+                {questionData.map((q, i) => {
+                  const answered = responses.find(r => r.uid === q.uid)?.selectedOption !== 0;
+                  return (
+                    <button 
+                      key={q.uid}
+                      onClick={() => setIndex(i)}
+                      className={`size-10 rounded-xl font-bold text-sm transition-all
+                        ${index === i ? 'ring-2 ring-purple-600 ring-offset-2' : ''}
+                        ${answered ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-400'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-6 pt-6 border-t border-slate-50 text-xs text-slate-400 leading-relaxed">
+                Tip: Answer all questions. Unattempted questions yield 0 points.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-    )
+    );
   }
 
-  //redirect ui
+  // 3. RESULT UI
   if (gameState === GAME_STATE.REDIRECT) {
-
     const testResp = testData?.[0];
-
     return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-10 text-center border border-slate-100">
+          <div className="relative inline-block mb-6">
+            <div className="size-24 bg-amber-50 rounded-full flex items-center justify-center">
+              <Trophy className="text-amber-500 size-12" />
+            </div>
+            <div className="absolute -top-2 -right-2 px-3 py-1 bg-purple-600 text-white rounded-full text-xs font-black animate-bounce">
+              DONE!
+            </div>
+          </div>
+          
+          <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Test Completed</h1>
+          <p className="text-slate-500 mt-2 font-medium">Redirecting to home in <span className="text-purple-600">{redirectTimer}s</span></p>
 
-      <div>
+          <div className="mt-8 mb-10 p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Your Total Score</p>
+             <p className="text-6xl font-black text-purple-600">{testResp?.score || 0}</p>
+          </div>
 
-        <h1>TEST RESULT</h1>
-
-        <h2>Redirecting in {redirectTimer}</h2>
-
-        <h1>SCORE : {testResp?.score}</h1>
-
-        <button onClick={() => { navigate('/') }}>GO HOME</button>
-
+          <button 
+            onClick={() => navigate('/')}
+            className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+          >
+            Return to Dashboard
+          </button>
+        </div>
       </div>
-
-    )
+    );
   }
 
   return null;
+};
 
-}
-
-export default Game
+export default Game;

@@ -8,6 +8,7 @@ import fs from "fs";
 import bcrypt from 'bcrypt'
 import { Test } from "../models/test.models.js";
 import mongoose from "mongoose";
+import { use } from "react";
 
 // register
 // login
@@ -41,9 +42,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const { fullName, password, username, dob } = req.body;
 
+    console.log("HI")
+
     if ([fullName, password, username, dob].some((a) => !a || a.trim() === "")) {
 
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "Details are missing"));
     }
 
@@ -52,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const existingUser = await User.findOne({ username })
 
     if (existingUser) {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "User with same username already exits"));
     }
 
@@ -93,6 +96,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { username, password } = req.body;
 
+    // console.log("HI");
+
     if ([username, password].some((item) => !item || item.trim() === "")) {
         return res.status(400).json(new ApiError(400, "Details are missing"))
     }
@@ -125,7 +130,11 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                userInstance,
+                {
+                    user: userInstance,
+                    accessToken,
+                    refreshToken
+                },
                 "User logged in successfully"
             )
         )
@@ -160,14 +169,14 @@ const updateUser = asyncHandler(async (req, res) => {
     const { fullName, username, password } = req.body;
 
     if ([fullName, username].some((a) => !a || a.trim() === "")) {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json("Incomplete details");
     }
 
     const findUser = await User.findOne({ username });
 
     if (findUser && username != req.user?.username) {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "Username is not available"));
     }
 
@@ -220,7 +229,11 @@ const fetchUser = asyncHandler(async (req, res) => {
 
     // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
 
-    const userData = await Test.aggregate([
+    // console.log("HI inside cotroller");
+
+    let userInfo
+
+    userInfo = await Test.aggregate([
         { $match: { userId: req.user?._id } },
         {
             $lookup: {
@@ -254,25 +267,50 @@ const fetchUser = asyncHandler(async (req, res) => {
         }
     ]);
 
-    if(!userData)
-        return res.status(400).json(new ApiError(400,"Failed to fetch user Data"));
+    // console.log(userInfo.length);
 
-    return res.status(200).json(new ApiResponse(200,userData,'Successfully fetched user details'));
+    if (userInfo.length === 0) {
+        const newInfo = await User.aggregate([
+            { $match: { _id: req.user?._id } },
+            {
+                $addFields: {
+                    totalAttempts: 0,
+                    highScore: 0,
+                    totalScore: 0
+                }
+            },
+            {
+                $project: {
+                    password: 0,
+                    refreshToken: 0
+                }
+            }
+        ])
+
+        userInfo = newInfo;
+    }
+
+    if (userInfo.length === 0)
+        return res.status(400).json(new ApiError(400, "Failed to fetch user Data"));
+
+    return res.status(200).json(new ApiResponse(200, userInfo, 'Successfully fetched user details'));
 
 });
 
 const fetchOtherUser = asyncHandler(async (req, res) => {
 
     // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
-    const {userId} = req.body;
+    const { userId } = req.body;
 
-    if(!userId || userId.trim() == "")
-        return res.status(400).json(new ApiError(400,"userId required"));
+    if (!userId || userId.trim() == "")
+        return res.status(400).json(new ApiError(400, "userId required"));
 
     const user = new mongoose.Types.ObjectId(userId);
 
-    const userData = await Test.aggregate([
-        { $match: { userId : user } },
+    let userInfo;
+
+    userInfo = await Test.aggregate([
+        { $match: { userId: user } },
         {
             $lookup: {
                 from: "users",
@@ -305,10 +343,30 @@ const fetchOtherUser = asyncHandler(async (req, res) => {
         }
     ]);
 
-    if(!userData)
-        return res.status(400).json(new ApiError(400,"Failed to fetch user Data"));
+    if (userInfo.length === 0)
+    {
+        userInfo = await User.aggregate([
+            { $match: { _id: user } },
+            {
+                $addFields: {
+                    totalAttempts: 0,
+                    highScore: 0,
+                    totalScore: 0
+                }
+            },
+            {
+                $project: {
+                    password: 0,
+                    refreshToken: 0
+                }
+            }
+        ])
+    }
 
-    return res.status(200).json(new ApiResponse(200,userData,'Successfully fetched user details'));
+    if (!userInfo)
+        return res.status(400).json(new ApiError(400, "Failed to fetch user Data"));
+
+    return res.status(200).json(new ApiResponse(200, userInfo, 'Successfully fetched user details'));
 
 });
 

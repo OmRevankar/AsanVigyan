@@ -175,7 +175,7 @@ const userSlice = createSlice({
         })
         .addCase(loginUser.fulfilled , (state,action) => {
             state.isLoading = false;
-            state.userData = action.payload.data;
+            state.userData = action.payload.data.user;
             // localStorage.setItem("isLoggedIn","true");
             state.isAuthenticated = true;
             toast.success(action.payload.message || "Successfully Logged In")

@@ -112,6 +112,9 @@ const submitTest = asyncHandler(async (req, res) => {
     const { response } = req.body;
     let totalScore = 0;
 
+    // console.log("IN controller");
+    // console.log(response);
+
     const dummy_res = [{ uid: 1, selectedOption: 2 }, { uid: 1, selectedOption: 2 }];
 
     const uidStore = response.map((item) => item.uid);
@@ -133,15 +136,16 @@ const submitTest = asyncHandler(async (req, res) => {
         let score = 0;
         let status = 'unattempted';
 
-        if (item.selectedOption != 0 && item.selectedOption === qn.correctOption) {
+        if (item.selectedOption !== 0 && item.selectedOption === qn.correctOption) {
             score += qn.value;
             totalScore += qn.value;
             status = "correct"
         }
-        else if (item.selectedOption != 0 && item.selectedOption !== qn.correctOption) {
+        else if (item.selectedOption !== 0 && item.selectedOption !== qn.correctOption) {
             status = 'incorrect';
         }
-        else { }
+        else if(item.selectedOption === 0)
+            status = 'unattempted';
 
         return {
             uid: qn.uid,
@@ -151,6 +155,8 @@ const submitTest = asyncHandler(async (req, res) => {
         }
 
     });
+
+    // console.log(cal_res);
 
     const testInstance = await Test.create({
         userId: req.user?._id,
@@ -219,6 +225,7 @@ const submitTest = asyncHandler(async (req, res) => {
 
     ]);
 
+    console.log("Find Test : ", findTest);
 
     if (!findTest)
         return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
@@ -301,6 +308,8 @@ const fetchTest = asyncHandler(async (req, res) => {
 
 const fetchAll = asyncHandler(async (req, res) => {
 
+    console.log("HI in con")
+
     const test = await Test.aggregate([
         {
             $lookup: {
@@ -362,6 +371,8 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
 
     const userId = req.user?._id;
 
+    // console.log("HI in con")
+
     const testHistory = await Test.aggregate([
         { $match: { userId } },
         {
@@ -404,6 +415,7 @@ const fetchUserTestHistory = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, testHistory, "Fetched user test history successfully"));
 
 });
+
 const fetchUserTestHistoryAdmin = asyncHandler(async (req, res) => {
 
     const { userId } = req.body;
