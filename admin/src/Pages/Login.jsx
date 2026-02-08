@@ -3,11 +3,14 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { loginAdmin } from '../Slices/adminSlice';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ShieldCheck, Loader2 } from 'lucide-react';
+import { Lock, User, ShieldCheck, Loader2 , Eye , EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -79,30 +82,30 @@ const Login = () => {
 
             {/* Password Field */}
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
-                Password
-              </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="size-5 text-slate-300 group-focus-within:text-purple-500 transition-colors" />
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                  <input 
+                    type={showPassword ? "text" : "password"}
+                    className={`w-full pl-14 pr-14 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.password ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-purple-400 focus:bg-white'}`}
+                    placeholder="••••••••"
+                    {...register('password', {
+                      pattern: { 
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, 
+                        message: "Must include uppercase, lowercase, number, and symbol" 
+                      }
+                    })}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
-                <input 
-                  type="password" 
-                  placeholder='********' 
-                  className={`w-full pl-11 pr-4 py-4 bg-slate-50 border-2 rounded-2xl outline-none transition-all
-                    ${errors.password ? 'border-red-100 focus:border-red-400' : 'border-slate-50 focus:border-purple-500 focus:bg-white focus:shadow-md'}`}
-                  {...register('password', {
-                    required: { value: true, message: "Password is required" },
-                    pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, message: "Must include Uppercase, Number & Symbol" }
-                  })} 
-                />
+                {errors.password && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.password.message}</p>}
               </div>
-              {errors.password && (
-                <p className="text-red-500 text-xs font-bold mt-2 ml-1 flex items-center gap-1">
-                  <span className="size-1 bg-red-500 rounded-full" /> {errors.password.message}
-                </p>
-              )}
-            </div>
 
             {/* Submit Button */}
             <button 

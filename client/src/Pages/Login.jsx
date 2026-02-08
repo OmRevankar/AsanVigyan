@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../Slices/userSlice';
 import { useNavigate, Link } from 'react-router-dom'
-import { Lock, User, Loader2 } from 'lucide-react'; // Icons for professional touch
+import { Lock, User, Loader2, EyeOff, Eye } from 'lucide-react'; // Icons for professional touch
 
 const Login = () => {
     const {
@@ -12,6 +12,8 @@ const Login = () => {
         reset,
         formState: { errors, isSubmitting }
     } = useForm();
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -68,24 +70,31 @@ const Login = () => {
                     </div>
 
                     {/* Password Field */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+                    <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase ml-1">Password</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input 
-                                type='password' 
-                                placeholder='••••••••'  
+                            <input
+                                type={showPassword ? 'text' : 'password'} // Dynamic Type
+                                placeholder='••••••••'
                                 {...register('password', {
-                                    required: "Password is required",
-                                    pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, message: "Must be 8+ chars with Symbol & Uppercase" }
-                                })} 
-                                className={`w-full pl-10 pr-4 py-3 rounded-xl border outline-none transition-all duration-200
-                                    ${errors.password 
-                                        ? 'border-red-300 bg-red-50 focus:border-red-500' 
-                                        : 'border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50'}`}
+                                    pattern: {
+                                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                                        message: "Must be 8+ chars with Symbol & Uppercase"
+                                    }
+                                })}
+                                className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all"
                             />
+                            {/* Toggle Button */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 transition-colors p-1"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
                         </div>
-                        {errors.password && <p className="text-xs text-red-500 font-medium ml-1">{errors.password.message}</p>}
+                        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
                     </div>
 
                     {/* Forgot Password Link (Visual Placeholder) */}

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../Slices/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { User, AtSign, Lock, Camera, Loader2, ArrowLeft, Save } from 'lucide-react';
+import { User, AtSign, Lock, Camera, Loader2, ArrowLeft, Save , Eye , EyeOff } from 'lucide-react';
 import Navbar from '../Components/Navbar';
 
 const Update = () => {
@@ -19,6 +19,8 @@ const Update = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         if (userData) {
             reset({
@@ -29,8 +31,8 @@ const Update = () => {
     }, [userData, reset]);
 
     const watchImage = watch("profileImage");
-    const previewImage = (watchImage && watchImage.length > 0) 
-        ? URL.createObjectURL(watchImage[0]) 
+    const previewImage = (watchImage && watchImage.length > 0)
+        ? URL.createObjectURL(watchImage[0])
         : userData?.profileImage;
 
     const onSubmit = async (data) => {
@@ -53,12 +55,12 @@ const Update = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Navbar />
-            
+
             <div className="max-w-2xl mx-auto px-4 py-10">
                 {/* Back Button & Title */}
                 <div className="flex items-center gap-4 mb-8">
-                    <button 
-                        onClick={() => navigate(-1)} 
+                    <button
+                        onClick={() => navigate(-1)}
                         className="p-2 bg-white rounded-full shadow-sm border border-slate-200 text-slate-600 hover:text-purple-600 transition-colors"
                     >
                         <ArrowLeft size={20} />
@@ -74,21 +76,21 @@ const Update = () => {
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center">
                         <div className="relative group">
                             <div className="size-32 rounded-full overflow-hidden border-4 border-purple-50 shadow-inner bg-slate-100">
-                                <img 
-                                    src={previewImage || 'https://via.placeholder.com/128'} 
-                                    alt="Profile" 
-                                    className="w-full h-full object-cover transition-opacity group-hover:opacity-75" 
+                                <img
+                                    src={previewImage || 'https://via.placeholder.com/128'}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover transition-opacity group-hover:opacity-75"
                                 />
                             </div>
                             <label className="absolute inset-0 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="bg-black/40 p-3 rounded-full text-white backdrop-blur-sm">
                                     <Camera size={24} />
                                 </div>
-                                <input 
-                                    type="file" 
-                                    accept='image/*' 
+                                <input
+                                    type="file"
+                                    accept='image/*'
                                     className="hidden"
-                                    {...register('profileImage')} 
+                                    {...register('profileImage')}
                                 />
                             </label>
                         </div>
@@ -98,17 +100,17 @@ const Update = () => {
                     {/* Information Card */}
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-5">
                         <h2 className="text-sm font-bold text-purple-600 uppercase tracking-widest mb-2">Public Info</h2>
-                        
+
                         {/* Full Name */}
                         <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
                             <div className="relative">
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input 
-                                    type='text' 
+                                <input
+                                    type='text'
                                     {...register('fullName', {
                                         pattern: { value: /^[A-Za-z0-9 ]+$/, message: "Invalid Full Name" }
-                                    })} 
+                                    })}
                                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all"
                                 />
                             </div>
@@ -120,11 +122,11 @@ const Update = () => {
                             <label className="text-sm font-semibold text-slate-700 ml-1">Username</label>
                             <div className="relative">
                                 <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input 
-                                    type='text' 
+                                <input
+                                    type='text'
                                     {...register('username', {
                                         pattern: { value: /^[A-Za-z0-9_.]{2,15}$/, message: "Invalid username" }
-                                    })} 
+                                    })}
                                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all"
                                 />
                             </div>
@@ -135,19 +137,32 @@ const Update = () => {
                     {/* Security Card */}
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-5">
                         <h2 className="text-sm font-bold text-purple-600 uppercase tracking-widest mb-2">Security</h2>
-                        
+
                         <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700 ml-1">New Password</label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input 
-                                    type='password' 
+
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
                                     placeholder='Leave blank to keep current'
                                     {...register('password', {
-                                        pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, message: "Password too weak" }
-                                    })} 
-                                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all placeholder:text-slate-400"
+                                        pattern: {
+                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                                            message: "Password too weak"
+                                        }
+                                    })}
+                                    className="w-full pl-10 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all placeholder:text-slate-400"
                                 />
+
+                                {/* Eye Toggle Button */}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 transition-colors p-1"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
                             </div>
                             {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
                         </div>
@@ -155,15 +170,15 @@ const Update = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             type="button"
                             onClick={() => navigate('/profile')}
                             className="flex-1 px-6 py-4 border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-100 transition-colors"
                         >
                             Cancel
                         </button>
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={isSubmitting}
                             className="flex-[2] px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
                         >
