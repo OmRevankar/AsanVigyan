@@ -13,13 +13,17 @@ const initialState = {
 export const startTest = createAsyncThunk(
     '/test/start',
 
-    async (_,{rejectWithValue}) => {
+    async (data,{rejectWithValue}) => {
 
         try {
             
             const resp = await fetch(`${BACKEND_URL}/test/start`,{
-                method : "GET",
-                credentials : "include"
+                method : "POST",
+                body:JSON.stringify(data),
+                credentials : "include",
+                headers : {
+                    'Content-Type' : 'application/json'
+                }
             });
 
             const response = await resp.json();

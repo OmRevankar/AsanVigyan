@@ -4,7 +4,8 @@ import { beginTest, fetchAll, fetchTest, fetchUserTestHistory, fetchUserTestHist
 
 const router = Router();
 
-router.route('/start').get(verifyJWT,beginTest);
+router.route('/start').post(verifyJWT,beginTest);
+
 router.route('/submit').post(verifyJWT,submitTest);
 router.route('/fetch').post(verifyJWT,fetchTest);
 router.route('/fetch-user-test-history').get(verifyJWT,fetchUserTestHistory);

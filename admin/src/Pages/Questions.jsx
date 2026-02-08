@@ -25,7 +25,7 @@ const DeleteDialogue = ({ isOpen, setIsOpen, seletedQUid }) => {
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-            <motion.div 
+            <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="relative bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl text-center"
@@ -35,7 +35,7 @@ const DeleteDialogue = ({ isOpen, setIsOpen, seletedQUid }) => {
                 </div>
                 <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">Remove Question?</h3>
                 <p className="text-slate-500 font-medium mt-2 mb-8 text-sm">This action is permanent and will remove the question from all future tests.</p>
-                
+
                 <div className="flex gap-3">
                     <button onClick={() => setIsOpen(false)} className="flex-1 py-3 font-bold text-slate-400 hover:bg-slate-50 rounded-xl transition-colors">Cancel</button>
                     <button onClick={handleDelete} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-100">Delete</button>
@@ -65,14 +65,14 @@ const Questions = () => {
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             <div className="max-w-5xl mx-auto px-6 py-10">
-                
+
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                     <div>
                         <h1 className="text-3xl font-black text-slate-800 tracking-tight uppercase">Question Bank</h1>
                         <p className="text-slate-500 font-medium italic">Manage and organize your academic database</p>
                     </div>
-                    <button 
+                    <button
                         onClick={() => navigate('/q/create')}
                         className="flex items-center gap-2 bg-purple-600 text-white px-6 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 active:scale-95"
                     >
@@ -122,7 +122,7 @@ const Questions = () => {
                             return (
                                 <div key={qn.uid} className={`bg-white rounded-[2rem] border transition-all duration-300 ${isExpanded ? 'ring-2 ring-purple-500 shadow-xl' : 'border-slate-100 shadow-sm hover:border-purple-200'}`}>
                                     {/* ... Rest of your existing list rendering logic ... */}
-                                    <div 
+                                    <div
                                         className="p-6 cursor-pointer flex items-center justify-between"
                                         onClick={() => setExpandedId(isExpanded ? null : qn.uid)}
                                     >
@@ -138,13 +138,13 @@ const Questions = () => {
                                         </div>
 
                                         <div className="flex items-center gap-3 ml-4">
-                                            <button 
+                                            <button
                                                 onClick={(e) => { e.stopPropagation(); navigate(`/q/update/${qn.uid}`) }}
                                                 className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                                             >
                                                 <Edit3 size={18} />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={(e) => { e.stopPropagation(); setSelectedQUid(qn.uid); setIsOpen(true) }}
                                                 className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                             >
@@ -155,19 +155,71 @@ const Questions = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* ... AnimatePresence and Expanded Content logic stays exactly as you had it ... */}
+                                    <AnimatePresence>
+                                        {isExpanded && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="px-8 pb-8 pt-2 border-t border-slate-50">
+                                                    {/* Image Content */}
+                                                    <div className="mb-6">
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                            <ImageIcon size={12} /> Question Visual
+                                                        </p>
+                                                        {qn.questionImage ? (
+                                                            <img src={qn.questionImage} alt="Question" className="h-40 rounded-2xl border-2 border-slate-100 object-cover shadow-sm" />
+                                                        ) : (
+                                                            <div className="h-20 w-full bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-400 font-bold text-sm">
+                                                                No reference image attached
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Options Content */}
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                            <CheckCircle2 size={12} /> Correct Option Highlight
+                                                        </p>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            {qn.options.map((opt) => {
+                                                                const isCorrect = qn.correctOption === opt.id;
+                                                                return (
+                                                                    <div
+                                                                        key={opt.id}
+                                                                        className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${isCorrect
+                                                                                ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
+                                                                                : 'bg-white border-slate-100 text-slate-500'
+                                                                            }`}
+                                                                    >
+                                                                        <span className={`size-8 rounded-xl flex items-center justify-center font-black text-sm ${isCorrect ? 'bg-green-500 text-white' : 'bg-slate-100'}`}>
+                                                                            {opt.id}
+                                                                        </span>
+                                                                        <span className="font-bold">{opt.text}</span>
+                                                                        {isCorrect && <CheckCircle2 size={18} className="ml-auto" />}
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             )
                         })
                     ) : (
                         <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-                             <p className="text-slate-400 font-bold">No questions found in the database.</p>
+                            <p className="text-slate-400 font-bold">No questions found in the database.</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            <DeleteDialogue isOpen={isOpen} setIsOpen={setIsOpen} seletedQUid={seletedQUid} /> 
+            <DeleteDialogue isOpen={isOpen} setIsOpen={setIsOpen} seletedQUid={seletedQUid} />
         </div>
     )
 }

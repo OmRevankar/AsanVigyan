@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { startTest, submitTest } from '../Slices/testSlice';
 import { 
   Timer, AlertCircle, ChevronLeft, ChevronRight, 
-  Send, Info, CheckCircle2, Trophy, Loader2 
+  Send, Info, CheckCircle2, Trophy, Loader2, Languages
 } from 'lucide-react';
 
 const Game = () => {
@@ -12,6 +12,7 @@ const Game = () => {
   const navigate = useNavigate();
 
   const GAME_STATE = {
+    MODE_SELECTION: "mode_selection", // New Stage
     INSTRUCTION: "instruction",
     TEST: "test",
     REDIRECT: "redirect"
@@ -20,10 +21,11 @@ const Game = () => {
   const { testData, questionData, isLoading } = useSelector(state => state.test);
 
   const [responses, setResponses] = useState([]);
-  const [gameState, setGameState] = useState(GAME_STATE.INSTRUCTION);
+  const [gameState, setGameState] = useState(GAME_STATE.MODE_SELECTION); // Start here
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [index, setIndex] = useState(0);
 
-  const [testTimer, setTestTimer] = useState(60); // Set to 60 for better testing, adjust as needed
+  const [testTimer, setTestTimer] = useState(60); 
   const [redirectTimer, setRedirectTimer] = useState(10);
   const [instructionTimer, setInstructionTimer] = useState(10);
 
@@ -45,7 +47,11 @@ const Game = () => {
   useEffect(() => {
     if (gameState !== GAME_STATE.INSTRUCTION) return;
 
-    dispatch(startTest()).unwrap().then((res) => {
+    const data = {
+      category : selectedLanguage
+    }
+
+    dispatch(startTest(data)).unwrap().then((res) => {
       setResponses(res.data.map(qn => ({ uid: qn.uid, selectedOption: 0 })));
     }).catch(console.error);
 
@@ -106,7 +112,50 @@ const Game = () => {
     setResponses(prev => prev.map(r => r.uid === uid ? { ...r, selectedOption } : r));
   };
 
+  const handleModeSelection = (lang) => {
+    setSelectedLanguage(lang);
+    setGameState(GAME_STATE.INSTRUCTION);
+  };
+
   // --- UI STAGES ---
+
+  // 0. MODE SELECTION POPUP (NEW)
+  if (gameState === GAME_STATE.MODE_SELECTION) {
+    return (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+        <div className="max-w-sm w-full bg-white rounded-[2.5rem] shadow-2xl p-8 border border-slate-100 animate-in fade-in zoom-in duration-300">
+          <div className="flex flex-col items-center text-center">
+            <div className="size-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6">
+              <Languages size={32} />
+            </div>
+            <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Select Test Mode</h2>
+            <h3 className="text-lg font-bold text-slate-500 mb-8">परीक्षा मोड निवडा</h3>
+            
+            <div className="grid grid-cols-1 gap-4 w-full">
+              <button 
+                onClick={() => handleModeSelection('10th_Semi_English')}
+                className="w-full py-4 bg-slate-50 hover:bg-purple-600 hover:text-white text-slate-700 font-black rounded-2xl transition-all border-2 border-slate-100 hover:border-purple-600 active:scale-95"
+              >
+                10th SEMI - ENGLISH
+              </button>
+              <button 
+                onClick={() => handleModeSelection('10th_Marathi')}
+                className="w-full py-4 bg-slate-50 hover:bg-purple-600 hover:text-white text-slate-700 font-black rounded-2xl transition-all border-2 border-slate-100 hover:border-purple-600 active:scale-95"
+              >
+                10th मराठी (MARATHI)
+              </button>
+              <button 
+                onClick={() => handleModeSelection('Kids')}
+                className="w-full py-4 bg-slate-50 hover:bg-purple-600 hover:text-white text-slate-700 font-black rounded-2xl transition-all border-2 border-slate-100 hover:border-purple-600 active:scale-95"
+              >
+                Kids
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 1. INSTRUCTION UI
   if (gameState === GAME_STATE.INSTRUCTION) {
@@ -118,6 +167,7 @@ const Game = () => {
               <Info className="text-purple-600 size-10" />
             </div>
             <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Test Instructions</h1>
+            <p className="text-xs font-bold text-purple-500 mb-4 tracking-widest uppercase">Mode: {selectedLanguage}</p>
             <div className="my-6 space-y-3 w-full">
               {[
                 `Test starts in ${instructionTimer} seconds`,
@@ -143,7 +193,7 @@ const Game = () => {
     );
   }
 
-  // 2. TEST UI
+  // 2. TEST UI (Logic untouched as requested)
   if (gameState === GAME_STATE.TEST) {
     if (isLoading || !questionData.length) {
       return (
@@ -163,7 +213,7 @@ const Game = () => {
         <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
           <div className="flex items-center gap-4">
             <div className="px-3 py-1 bg-purple-100 text-purple-600 rounded-lg font-bold text-xs uppercase tracking-widest">
-              Live Test
+              Live Test ({selectedLanguage})
             </div>
             <h2 className="hidden md:block font-bold text-slate-700">Question {index + 1} of {questionData.length}</h2>
           </div>
@@ -275,7 +325,7 @@ const Game = () => {
     );
   }
 
-  // 3. RESULT UI
+  // 3. RESULT UI (Logic untouched as requested)
   if (gameState === GAME_STATE.REDIRECT) {
     const testResp = testData?.[0];
     return (

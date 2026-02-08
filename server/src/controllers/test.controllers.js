@@ -12,7 +12,13 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const beginTest = asyncHandler(async (req, res) => {
 
+    const {category} = req.body;
+
+    if(!category || category.trim() === '')
+        return res.status(400).json(new ApiError(400,'Catgeory is missing'));
+
     const questions = await Question.aggregate([
+        {$match : {category:category} },
         { $sample: { size: 5 } },
         {
             $project: {
@@ -24,6 +30,8 @@ const beginTest = asyncHandler(async (req, res) => {
             }
         }
     ])
+
+    console.log(questions);
 
     if (!questions)
         return res.status(400).json(new ApiError(400, "Failed to fetch questions"));

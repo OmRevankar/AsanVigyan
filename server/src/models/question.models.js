@@ -43,6 +43,12 @@ const questionSchema = new mongoose.Schema(
         value : {
             type : Number,
             default : 1
+        },
+
+        category : {
+            type : String,
+            required:true,
+            enum : ['10th_Semi_English','10th_Marathi','Kids']
         }
     }
     ,{timestamps:true});

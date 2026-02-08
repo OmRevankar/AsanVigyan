@@ -3,8 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { createQuestion } from '../Slices/questionSlice';
 import { useNavigate } from 'react-router-dom';
-import { ImagePlus, Save, LayoutList, CheckCircle2, AlertCircle, X } from 'lucide-react';
-import Navbar from '../Components/Navbar';
+import { ImagePlus, Save, LayoutList, CheckCircle2, AlertCircle, Tag } from 'lucide-react';
 
 const CreateQuestion = () => {
   const dispatch = useDispatch();
@@ -15,11 +14,11 @@ const CreateQuestion = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
-    watch
+    reset
   } = useForm({
     defaultValues: {
-      correctOption: "1"
+      correctOption: "1",
+      category: "Kids"
     }
   });
 
@@ -37,6 +36,7 @@ const CreateQuestion = () => {
     formData.append('questionImage', data.questionImage?.[0]);
     formData.append('value', data.value);
     formData.append('correctOption', data.correctOption);
+    formData.append('category', data.category);
 
     const options = [
       { id: 1, text: data.option1 },
@@ -68,7 +68,6 @@ const CreateQuestion = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
-          {/* Main Content Card */}
           <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-10">
             
             {/* Description Field */}
@@ -88,10 +87,10 @@ const CreateQuestion = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               {/* Image Upload */}
-              <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Attachment (Optional)</label>
+              <div className="md:col-span-1">
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Attachment</label>
                 <div className="relative group">
                   <input 
                     type="file" 
@@ -100,14 +99,11 @@ const CreateQuestion = () => {
                     {...register('questionImage')}
                     onChange={handleImageChange}
                   />
-                  <div className={`h-40 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${preview ? 'border-purple-200 bg-purple-50' : 'border-slate-200 bg-slate-50 group-hover:bg-slate-100'}`}>
+                  <div className={`h-32 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center transition-all ${preview ? 'border-purple-200 bg-purple-50' : 'border-slate-200 bg-slate-50 group-hover:bg-slate-100'}`}>
                     {preview ? (
                       <img src={preview} alt="Preview" className="h-full w-full object-contain rounded-3xl p-2" />
                     ) : (
-                      <>
-                        <ImagePlus className="text-slate-300 mb-2" size={32} />
-                        <span className="text-xs font-bold text-slate-400">Click to upload image</span>
-                      </>
+                      <ImagePlus className="text-slate-300" size={24} />
                     )}
                   </div>
                 </div>
@@ -115,15 +111,31 @@ const CreateQuestion = () => {
 
               {/* Marks Field */}
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Question Weightage (Marks)</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Marks</label>
                 <input 
                   type="number" 
                   placeholder="2" 
                   className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-purple-400 focus:bg-white outline-none font-black text-xl text-slate-700 transition-all"
-                  {...register('value', { required: "Marks are required" })} 
+                  {...register('value', { required: "Required" })} 
                 />
                 {errors.value && (
                   <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.value.message}</p>
+                )}
+              </div>
+
+              {/* Category Field (NEW) */}
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Category</label>
+                <select 
+                  className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-purple-400 focus:bg-white outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
+                  {...register('category', { required: "Category is required" })}
+                >
+                  <option value="English">English</option>
+                  <option value="Marathi">Marathi</option>
+                  <option value="Kids">Kids</option>
+                </select>
+                {errors.category && (
+                  <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.category.message}</p>
                 )}
               </div>
             </div>

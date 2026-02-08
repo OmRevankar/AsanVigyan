@@ -18,7 +18,7 @@ const Navbar = () => {
               <span className="text-white font-bold text-xl">Q</span>
             </div>
             <span className="font-bold text-xl tracking-tight text-slate-800 hidden sm:block">
-              Quiz<span className="text-purple-600">Master</span>
+              Asan<span className="text-purple-600">Vigyan</span>
             </span>
           </div>
 

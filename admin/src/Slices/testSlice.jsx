@@ -93,7 +93,74 @@ export const fetchTest = createAsyncThunk(
 const testSlice = createSlice({
     name : "test",
     initialState,
-    reducers : {},
+    reducers : {
+
+        //marks , time , username
+        sortByMarksDesc : (state,action) => {
+
+            state.testHistory.sort((a,b) => {
+
+                if((a.score - b.score) !== 0)
+                    return b.score - a.score
+
+                return (new Date(a.createdAt) - new Date(b.createdAt))
+            })
+
+        } ,
+
+        sortByMarksAscend : (state,action) => {
+
+            state.testHistory.sort((a,b) => {
+
+                if((a.score - b.score) !== 0)
+                    return a.score - b.score
+
+                return new Date(a.createdAt) - new Date(b.createdAt)
+            })
+
+        },
+
+        sortByLatest : (state,action) => {
+            state.testHistory.sort((a,b) => {
+                
+                return new Date(b.createdAt) - new Date(a.createdAt)
+
+            })
+        },
+
+        sortByOldest : (state,action) => {
+            
+            state.testHistory.sort((a,b) => {
+                return new Date(a.createdAt) - new Date(b.createdAt)
+            })
+
+        },
+
+        sortByFullName : (state,action) => {
+
+            state.testHistory.sort((a,b) => {
+
+                const h1 = a.fullName.toLowerCase();
+                const h2 = b.fullName.toLowerCase();
+
+                if(h1 > h2)
+                    return 1;
+                else if(h1 < h2)
+                    return -1;
+                return 0;
+            })
+
+        },
+
+        searchFullName : (state,action) => {
+
+            const keyword = action.payload.keyword.toLowerCase();
+
+            state.testHistory = state.testHistory.filter(test => test.fullName.toLowerCase().includes(keyword))
+
+        }
+
+    },
     extraReducers : (builder) => {
         builder
         .addCase(fetchUserTestHistory.pending,(state,action) => {
@@ -137,5 +204,7 @@ const testSlice = createSlice({
         })
     }
 });
+
+export const {sortByMarksAscend , sortByMarksDesc , sortByLatest , sortByOldest , sortByFullName , searchFullName} = testSlice.actions
 
 export default testSlice.reducer;

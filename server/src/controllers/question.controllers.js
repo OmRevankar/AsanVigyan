@@ -13,7 +13,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const createQuestion = asyncHandler( async (req,res) => {
 
-    const {description,options,correctOption,value} = req.body;
+    const {description,options,correctOption,value,category} = req.body;
 
     //parse
     const parsedCorrectOption = Number(correctOption);
@@ -30,7 +30,7 @@ const createQuestion = asyncHandler( async (req,res) => {
     console.log(parsedCorrectOption);
     console.log(parsedValue)
 
-    if(!description || Number.isNaN(parsedCorrectOption) || Number.isNaN(value) )
+    if(!description || !category || Number.isNaN(parsedCorrectOption) || Number.isNaN(value) )
     {
         if(req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400,"Incomplete Data"))
@@ -71,6 +71,7 @@ const createQuestion = asyncHandler( async (req,res) => {
         correctOption : parsedCorrectOption,
         value : parsedValue,
         questionImage : uploadResp ? uploadResp?.url : undefined,
+        category,
         createdBy : req?.admin._id,
         uid : 999
     });
