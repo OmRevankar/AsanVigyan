@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteQuestion, fetchAllQuestions } from '../Slices/questionSlice';
-import { Trash, Edit3, Plus, ChevronDown, ChevronUp, Image as ImageIcon, CheckCircle2, AlertCircle, Database, Layers, Sparkles } from 'lucide-react'
+import { deleteQuestion, fetchAllQuestions, search, sortByLatest, sortByMarksAscend, sortByMarksDesc, sortByOldest, sortByWordsAscend, sortByWordsDesc } from '../Slices/questionSlice';
+import { Search , Filter, Trash, Edit3, Plus, ChevronDown, ChevronUp, Image as ImageIcon, CheckCircle2, AlertCircle, Database, Layers, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../Components/Navbar';
@@ -53,6 +53,7 @@ const Questions = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [seletedQUid, setSelectedQUid] = useState();
     const [expandedId, setExpandedId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         dispatch(fetchAllQuestions())
@@ -61,6 +62,28 @@ const Questions = () => {
     // Calculated Stats
     const totalMarks = questionData.reduce((acc, curr) => acc + (Number(curr.value) || 0), 0);
     const questionsWithImages = questionData.filter(q => q.questionImage).length;
+
+    const handleSort = (type) => {
+        switch (type) {
+            case 'latest': dispatch(sortByLatest()); break;
+            case 'oldest': dispatch(sortByOldest()); break;
+            case 'ascend': dispatch(sortByWordsAscend()); break;
+            case 'desc': dispatch(sortByWordsDesc()); break;
+            case 'desc': dispatch(sortByMarksDesc()); break;
+            case 'asc': dispatch(sortByMarksAscend()); break;
+            default: break;
+        }
+    };
+
+    const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        if (value === "") {
+          dispatch(fetchAllQuestions()); // Reset list when search is cleared
+        } else {
+          dispatch(search({ key: value }));
+        }
+      };
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
@@ -113,6 +136,37 @@ const Questions = () => {
                     </div>
                 </div>
                 {/* --- END STATS SECTION --- */}
+
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-2 bg-purple-600 rounded-full"></div>
+                    <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Question Data</h2>
+
+                    <div className="relative group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-purple-500 transition-colors" size={18} />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            placeholder="Search by Question's Description . . ."
+                            className="pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all w-64"
+                        />
+                    </div>
+
+                    <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl px-4 py-2.5 shadow-sm">
+                        <Filter size={16} className="text-purple-600 mr-2" />
+                        <select
+                            onChange={(e) => handleSort(e.target.value)}
+                            className="bg-transparent text-xs font-black uppercase tracking-widest text-slate-600 outline-none cursor-pointer"
+                        >
+                            <option value="latest">Latest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="ascend">Alphabetic: Ascend</option>
+                            <option value="desc">Alphabetic: Desc</option>
+                            <option value="desc">Marks: High to Low</option>
+                            <option value="asc">Marks: Low to High</option>
+                        </select>
+                    </div>
+                </div>
 
                 {/* Questions List */}
                 <div className="space-y-4">
@@ -190,8 +244,8 @@ const Questions = () => {
                                                                     <div
                                                                         key={opt.id}
                                                                         className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${isCorrect
-                                                                                ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
-                                                                                : 'bg-white border-slate-100 text-slate-500'
+                                                                            ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
+                                                                            : 'bg-white border-slate-100 text-slate-500'
                                                                             }`}
                                                                     >
                                                                         <span className={`size-8 rounded-xl flex items-center justify-center font-black text-sm ${isCorrect ? 'bg-green-500 text-white' : 'bg-slate-100'}`}>

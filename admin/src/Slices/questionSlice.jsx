@@ -145,7 +145,78 @@ export const fetchQuestion  = createAsyncThunk(
 const questionSlice = createSlice({
     name : 'question',
     initialState,
-    reducers : {},
+    reducers : {
+        //marks , alpha , search
+        search : (state,action) => {
+            const key = action.payload.key.toLowerCase();
+
+            state.questionData = state.questionData.filter(t => {
+                return t.description.toLowerCase().includes(key)
+            })
+
+        },
+
+        sortByMarksDesc : (state) => {
+            state.questionData.sort((a,b) => {
+                if(b.value === a.value)
+                    return b.value - a.value;
+
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            })
+        },
+
+        sortByMarksAscend : (state) => {
+            state.questionData.sort((a,b) => {
+
+                if(a.value === b.value)
+                    return a.value - b.value;
+
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            }) 
+        },
+
+        sortByWordsDesc : (state) => {
+            state.questionData.sort((a,b) => {
+
+                const h1 = a.description.toLowerCase();
+                const h2 = b.description.toLowerCase();
+
+                if(h1 < h2)
+                    return 1;
+                else if(h1 > h2)
+                    return -1;
+
+                return 0;
+            })
+        },
+
+        sortByWordsAscend : (state) => {
+            state.questionData.sort((a,b) => {
+
+                const h1 = a.description.toLowerCase();
+                const h2 = b.description.toLowerCase();
+
+                if(h1 < h2)
+                    return -1;
+                else if(h1 > h2)
+                    return 1;
+
+                return 0;
+            })
+        },
+
+        sortByLatest : (state) => {
+            state.questionData.sort((a,b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt)
+            })
+        },
+
+        sortByOldest : (state) => {
+            state.questionData.sort((a,b) => {
+                return new Date(a.createdAt) - new Date(b.createdAt)
+            })
+        }
+    },
     extraReducers : (builder) => {
         builder
         .addCase(fetchAllQuestions.pending , (state,action) => {
@@ -214,5 +285,7 @@ const questionSlice = createSlice({
         })
     }
 });
+
+export const {sortByMarksAscend,sortByMarksDesc,sortByWordsAscend,sortByWordsDesc,sortByLatest,sortByOldest,search} = questionSlice.actions
 
 export default questionSlice.reducer;

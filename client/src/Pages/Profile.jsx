@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserTestHistory } from '../Slices/testSlice';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../Slices/userSlice';
-import { X, OctagonMinus, Check, LogOut, Edit3, Award, Zap, Target, Calendar, Clock } from 'lucide-react';
+import { X, OctagonMinus, Check, LogOut, Edit3, Award, Zap, Target, Calendar, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import Navbar from '../Components/Navbar';
+import { motion, AnimatePresence } from 'framer-motion'; // Added Framer Motion
 
+// LogoutDialogue component remains the same...
 const LogoutDialogue = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   if (!isOpen) return null;
-
   const logout = () => {
     dispatch(logoutUser()).unwrap().then(() => {
       setIsOpen(false);
@@ -41,6 +41,9 @@ const LogoutDialogue = ({ isOpen, setIsOpen }) => {
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // State to track which test is currently expanded
+  const [expandedTestId, setExpandedTestId] = useState(null);
+
   const userData = useSelector(state => state.user.userData);
   const testHistory = useSelector(state => state.test.testHistory);
   const dispatch = useDispatch();
@@ -51,13 +54,18 @@ const Profile = () => {
   const formatDOB = (dob) => dob ? new Date(dob).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: "numeric" }) : 'N/A';
   const formatTime = (time) => time ? new Date(time).toLocaleString(undefined, { hour: "numeric", minute: "2-digit", hour12: true }) : "N/A";
 
+  // Toggle function
+  const toggleTest = (id) => {
+    setExpandedTestId(expandedTestId === id ? null : id);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       <Navbar />
       <LogoutDialogue isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <div className="max-w-6xl mx-auto px-4 mt-8">
-        {/* Profile Header Card */}
+        {/* Profile Header Card (Existing) */}
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative">
@@ -106,60 +114,87 @@ const Profile = () => {
           <Clock className="text-purple-600" /> Recent Activity
         </h2>
 
-        <div className="space-y-6">
-          {testHistory.map((test, i) => (
-            <div key={test.uid} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-              {/* Test Header */}
-              <div className="p-5 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 border-b border-slate-100">
-                <div className="flex items-center gap-4">
-                  <span className="size-10 flex items-center justify-center bg-purple-600 text-white rounded-xl font-bold">{i + 1}</span>
-                  <div>
-                    {/* <h3 className="font-bold text-slate-800 uppercase text-xs tracking-wider">Attempt #{test._id}</h3> */}
-                    <p className="text-sm text-slate-500">{formatDOB(test.createdAt)} • {formatTime(test.createdAt)}</p>
+        <div className="space-y-4">
+          {testHistory.map((test, i) => {
+            const isExpanded = expandedTestId === test.uid;
+
+            return (
+              <div key={test.uid} className={`bg-white rounded-2xl shadow-sm border transition-all duration-300 ${isExpanded ? 'border-purple-200 ring-1 ring-purple-100' : 'border-slate-100'}`}>
+                
+                {/* Clickable Test Header */}
+                <div 
+                  onClick={() => toggleTest(test.uid)}
+                  className="p-5 flex flex-wrap items-center justify-between gap-4 bg-slate-50/30 cursor-pointer hover:bg-slate-50/80 transition-colors rounded-t-2xl"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className={`size-10 flex items-center justify-center rounded-xl font-bold transition-colors ${isExpanded ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="text-sm text-slate-500 font-medium">{formatDOB(test.createdAt)} • {formatTime(test.createdAt)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Score</p>
+                      <p className="text-xl font-black text-purple-600">{test.score} <span className="text-xs font-normal text-slate-400">pts</span></p>
+                    </div>
+                    <div className={`p-2 rounded-lg transition-colors ${isExpanded ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-400'}`}>
+                      {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-slate-400 font-medium">Score Achieved</p>
-                  <p className="text-xl font-black text-purple-600">{test.score} <span className="text-sm font-normal text-slate-400">pts</span></p>
-                </div>
-              </div>
 
-              {/* Responses List */}
-              <div className="p-4 space-y-3">
-                {test.responses.map((qn, j) => (
-                  <div key={qn.uid} className={`rounded-xl border p-4 transition-all ${qn.status === 'correct' ? 'border-green-100 bg-green-50/30' : qn.status === 'incorrect' ? 'border-red-100 bg-red-50/30' : 'border-amber-100 bg-amber-50/30'}`}>
-                    <div className="flex justify-between items-start mb-3">
-                      <p className="font-semibold text-slate-700 leading-tight flex-1">
-                        <span className="text-slate-400 mr-2">{j+1}.</span>{qn.question.description}
-                      </p>
-                      <div className="flex items-center gap-2 ml-4">
-                        <span className="text-xs font-bold text-slate-500 whitespace-nowrap">{qn.score}/{qn.question.value}</span>
-                        {qn.status === "correct" ? <Check className="text-green-600" size={18} /> : (qn.status === "incorrect" ? <X className="text-red-600" size={18} /> : <OctagonMinus className="text-amber-600" size={18} />)}
-                      </div>
-                    </div>
+                {/* Animated Responses List */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 pt-2 space-y-3 border-t border-slate-50">
+                        {test.responses.map((qn, j) => (
+                          <div key={qn.uid} className={`rounded-xl border p-4 transition-all ${qn.status === 'correct' ? 'border-green-100 bg-green-50/30' : qn.status === 'incorrect' ? 'border-red-100 bg-red-50/30' : 'border-amber-100 bg-amber-50/30'}`}>
+                            <div className="flex justify-between items-start mb-3">
+                              <p className="font-semibold text-slate-700 leading-tight flex-1">
+                                <span className="text-slate-400 mr-2">{j+1}.</span>{qn.question.description}
+                              </p>
+                              <div className="flex items-center gap-2 ml-4">
+                                <span className="text-xs font-bold text-slate-500 whitespace-nowrap">{qn.score}/{qn.question.value}</span>
+                                {qn.status === "correct" ? <Check className="text-green-600" size={18} /> : (qn.status === "incorrect" ? <X className="text-red-600" size={18} /> : <OctagonMinus className="text-amber-600" size={18} />)}
+                              </div>
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {qn.question.options.map((opt) => {
-                        const isCorrect = opt.id === qn.question.correctOption;
-                        const isSelected = opt.id === qn.selectedOption;
-                        
-                        return (
-                          <div key={opt.id} className={`text-sm p-2 rounded-lg border flex justify-between items-center
-                            ${isCorrect ? 'bg-green-100 border-green-200 text-green-800 font-medium' : 
-                              isSelected && !isCorrect ? 'bg-red-100 border-red-200 text-red-800' : 
-                              'bg-white border-slate-100 text-slate-500'}`}>
-                            <span>{opt.text}</span>
-                            {isCorrect && <Check size={14} />}
-                            {isSelected && !isCorrect && <X size={14} />}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {qn.question.options.map((opt) => {
+                                const isCorrect = opt.id === qn.question.correctOption;
+                                const isSelected = opt.id === qn.selectedOption;
+                                
+                                return (
+                                  <div key={opt.id} className={`text-sm p-2 rounded-lg border flex justify-between items-center
+                                    ${isCorrect ? 'bg-green-100 border-green-200 text-green-800 font-medium' : 
+                                      isSelected && !isCorrect ? 'bg-red-100 border-red-200 text-red-800' : 
+                                      'bg-white border-slate-100 text-slate-500'}`}>
+                                    <span>{opt.text}</span>
+                                    {isCorrect && <Check size={14} />}
+                                    {isSelected && !isCorrect && <X size={14} />}
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

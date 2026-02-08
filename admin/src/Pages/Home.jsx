@@ -45,11 +45,11 @@ const Home = () => {
 
   const handleSort = (type) => {
     switch (type) {
-      case 'user': dispatch(sortByFullName()); break;
-      case 'latest': dispatch(sortByLatest()); break;
-      case 'oldest': dispatch(sortByOldest()); break;
-      case 'desc': dispatch(sortByMarksDesc()); break;
-      case 'asc': dispatch(sortByMarksAscend()); break;
+      case 'user': dispatch(sortByFullName({cat:'all'})); break;
+      case 'latest': dispatch(sortByLatest({cat:'all'})); break;
+      case 'oldest': dispatch(sortByOldest({cat:'all'})); break;
+      case 'desc': dispatch(sortByMarksDesc({cat:'all'})); break;
+      case 'asc': dispatch(sortByMarksAscend({cat:'all'})); break;
       default: break;
     }
   };
@@ -226,7 +226,7 @@ const Home = () => {
               }) : (
                 <div className="bg-white rounded-[2.5rem] p-12 text-center border-2 border-dashed border-slate-200">
                   <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                    No records found matching "{searchTerm}"
+                    No records found
                   </p>
                 </div>
               )
