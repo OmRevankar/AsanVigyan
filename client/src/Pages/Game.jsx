@@ -341,7 +341,7 @@ const Game = () => {
           </div>
           
           <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Test Completed</h1>
-          <p className="text-slate-500 mt-2 font-medium">Redirecting to home in <span className="text-purple-600">{redirectTimer}s</span></p>
+          <p className="text-slate-500 mt-2 font-medium">Redirecting to Dashboard in <span className="text-purple-600">{redirectTimer}s</span></p>
 
           <div className="mt-8 mb-10 p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Your Total Score</p>
@@ -349,7 +349,7 @@ const Game = () => {
           </div>
 
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/profile')}
             className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
           >
             Return to Dashboard

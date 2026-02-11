@@ -50,7 +50,7 @@ const CreateQuestion = () => {
       .unwrap()
       .then(() => {
         reset();
-        navigate('/all-questions');
+        navigate('/q/all-questions');
       })
       .catch((e) => console.error(e));
   };
@@ -130,8 +130,8 @@ const CreateQuestion = () => {
                   className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-purple-400 focus:bg-white outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
                   {...register('category', { required: "Category is required" })}
                 >
-                  <option value="English">English</option>
-                  <option value="Marathi">Marathi</option>
+                  <option value="10th_Semi_English">10th Semi English</option>
+                  <option value="10th_Marathi">10th Marathi</option>
                   <option value="Kids">Kids</option>
                 </select>
                 {errors.category && (

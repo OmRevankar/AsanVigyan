@@ -159,9 +159,9 @@ const questionSlice = createSlice({
         sortByMarksDesc : (state) => {
             state.questionData.sort((a,b) => {
                 if(b.value === a.value)
-                    return b.value - a.value;
+                    return new Date(b.createdAt) - new Date(a.createdAt);
 
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                return b.value - a.value;
             })
         },
 
@@ -169,9 +169,9 @@ const questionSlice = createSlice({
             state.questionData.sort((a,b) => {
 
                 if(a.value === b.value)
-                    return a.value - b.value;
-
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                    
+                return a.value - b.value;
             }) 
         },
 

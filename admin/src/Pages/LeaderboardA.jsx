@@ -20,7 +20,7 @@ const LeaderboardA = () => {
       
       {/* Secondary Admin Navigation for Leaderboard Types */}
       <div className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-screen mx-auto">
           <LeaderboardNavbar />
         </div>
       </div>
@@ -36,7 +36,7 @@ const LeaderboardA = () => {
             <p className="text-slate-500 font-medium">Viewing top performing users based on single-session high scores.</p>
           </div>
           <div className="bg-purple-100 text-purple-700 px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest">
-            Type A (Best Effort)
+            BEST ATTEMPTS
           </div>
         </div>
 
@@ -118,9 +118,6 @@ const LeaderboardA = () => {
           <p className="text-xs text-slate-400 font-medium">
             Showing top {data.length} performers in the High Score category.
           </p>
-          <button className="text-xs font-black text-purple-600 uppercase tracking-widest hover:underline">
-            Export Data (CSV)
-          </button>
         </div>
       </main>
     </div>

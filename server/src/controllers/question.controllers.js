@@ -11,9 +11,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 // update
 // delete
 
-const createQuestion = asyncHandler( async (req,res) => {
+const createQuestion = asyncHandler(async (req, res) => {
 
-    const {description,options,correctOption,value,category} = req.body;
+    const { description, options, correctOption, value, category } = req.body;
 
     //parse
     const parsedCorrectOption = Number(correctOption);
@@ -22,201 +22,195 @@ const createQuestion = asyncHandler( async (req,res) => {
     // console.log("hi");
     // console.log(typeof(options))
     let parsedOptions;
-    parsedOptions = typeof(options) == "string" ? JSON.parse(options) : options;
+    parsedOptions = typeof (options) == "string" ? JSON.parse(options) : options;
     console.log("hi");
 
-    console.log(typeof(parsedCorrectOption),typeof(parsedValue),typeof(parsedOptions));
+    console.log(typeof (parsedCorrectOption), typeof (parsedValue), typeof (parsedOptions));
     console.log(parsedOptions);
     console.log(parsedCorrectOption);
     console.log(parsedValue)
 
-    if(!description || !category || Number.isNaN(parsedCorrectOption) || Number.isNaN(value) )
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Incomplete Data"))
+    if (!description || !category || Number.isNaN(parsedCorrectOption) || Number.isNaN(value)) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Incomplete Data"))
     }
 
-    if(!Array.isArray(parsedOptions) || parsedOptions.length !== 4)
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Options Data is in incorrect format"));
+    if (!Array.isArray(parsedOptions) || parsedOptions.length !== 4) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Options Data is in incorrect format"));
     }
 
-    const validateOption = parsedOptions.some( (item) => item.id === parsedCorrectOption );
+    const validateOption = parsedOptions.some((item) => item.id === parsedCorrectOption);
 
-    if(!validateOption)
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Correct option must be within the provided options"));
+    if (!validateOption) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Correct option must be within the provided options"));
     }
 
     const image = req.file?.path;
     let uploadResp;
 
-    if(image)
-    {
+    if (image) {
 
         uploadResp = await uploadOnCloudinary(image);
 
-        if(!uploadResp)
-        {
-            return res.status(400).json(new ApiError(400,"Failed to upload on cloudinary"));
+        if (!uploadResp) {
+            return res.status(400).json(new ApiError(400, "Failed to upload on cloudinary"));
         }
 
     }
 
     const question = await Question.create({
         description,
-        options : parsedOptions,
-        correctOption : parsedCorrectOption,
-        value : parsedValue,
-        questionImage : uploadResp ? uploadResp?.url : undefined,
+        options: parsedOptions,
+        correctOption: parsedCorrectOption,
+        value: parsedValue,
+        questionImage: uploadResp ? uploadResp?.url : undefined,
         category,
-        createdBy : req?.admin._id,
-        uid : 999
+        createdBy: req?.admin._id,
+        uid: 999
     });
 
     const findQuestion = await Question.findById(question?._id);
 
-    if(!findQuestion)
-    {
-        return res.status(400).json(new ApiError(400,"Failed to create question"));
+    if (!findQuestion) {
+        return res.status(400).json(new ApiError(400, "Failed to create question"));
     }
 
-    return res.status(200).json(new ApiResponse(200,findQuestion,"Question screated successfully"));
+    return res.status(200).json(new ApiResponse(200, findQuestion, "Question screated successfully"));
 
-} )
+})
 
-const updateQuestion = asyncHandler( async (req,res) => {
+const updateQuestion = asyncHandler(async (req, res) => {
 
-    const {description,options,correctOption,value,uid} = req.body;
+    const { description, options, correctOption, value, uid } = req.body;
 
     const parsedCorrectOption = Number(correctOption);
     const parsedValue = Number(value);
     const parsedUid = Number(uid);
 
-    const parsedOptions = typeof(options) === "string" ? JSON.parse(options) : options;
+    const parsedOptions = typeof (options) === "string" ? JSON.parse(options) : options;
 
-    if(!description || Number.isNaN(parsedCorrectOption) || Number.isNaN(parsedValue) || Number.isNaN(parsedUid))
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Incomplete or invalid data"));
+    if (!description || Number.isNaN(parsedCorrectOption) || Number.isNaN(parsedValue) || Number.isNaN(parsedUid)) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Incomplete or invalid data"));
     }
 
-    if(!Array.isArray(parsedOptions) || parsedOptions.length != 4)
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"invalid options"));
+    if (!Array.isArray(parsedOptions) || parsedOptions.length != 4) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "invalid options"));
     }
 
     const validateOptions = parsedOptions.some(item => item.id === parsedCorrectOption);
 
-    if(!validateOptions)
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Correct option is not within the given options"));
+    if (!validateOptions) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Correct option is not within the given options"));
     }
 
     //check if that qn exits
-    const findQn = await Question.findOne({uid : parsedUid});
+    const findQn = await Question.findOne({ uid: parsedUid });
 
-    if(!findQn)
-    {
-        if(req.file?.path) fs.unlinkSync(req.file?.path);
-        return res.status(400).json(new ApiError(400,"Can't find question with the given uid"))
+    if (!findQn) {
+        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        return res.status(400).json(new ApiError(400, "Can't find question with the given uid"))
     }
 
     let deleteRes;
 
-    if(findQn.questionImage)
-    {
+    if (findQn.questionImage) {
         const qI = findQn?.questionImage.split('/');
         deleteRes = await deleteFromCloudinary(qI[qI.length - 1].split('.')[0]);
     }
 
-    if(!deleteRes)
+    if (!deleteRes)
         console.log("Failed to delete image from cloudinary");
 
     const image = req.file?.path;
     let uploadRes;
 
-    if(image)
-    {
+    if (image) {
         uploadRes = await uploadOnCloudinary(image);
 
-        if(!uploadRes)
-            return res.status(400).json(new ApiError(400,"Failed to upload on cloudinary"));
+        if (!uploadRes)
+            return res.status(400).json(new ApiError(400, "Failed to upload on cloudinary"));
     };
 
     const question = await Question.findByIdAndUpdate(
         findQn?._id,
         {
-            $set : {
+            $set: {
                 description,
-                options : parsedOptions,
-                correctOption : parsedCorrectOption,
-                value : parsedValue,
-                questionImage : uploadRes?.url
+                options: parsedOptions,
+                correctOption: parsedCorrectOption,
+                value: parsedValue,
+                questionImage: uploadRes?.url
             }
         },
         {
-            new : true
+            new: true
         }
     );
 
-    return res.status(200).json(new ApiResponse(200,question,"Question created successfully"));
-
-} );
-
-const deleteQuestion = asyncHandler(async (req,res) => {
-
-    const {uid} = req.body;
-
-    const parsedUid = Number(uid);
-
-    if(Number.isNaN(parsedUid))
-        return res.status(400).json(new ApiError(400,"Invalid UID"));
-
-    const findQn = await Question.findOne({uid:parsedUid});
-
-    if(!findQn)
-        return res.status(400).json(new ApiError(400,"Failed to find the question with the uid"));
-
-    const deleteRes = await Question.findByIdAndDelete(findQn?._id);
-
-    if(!deleteRes)
-        return res.status(400).json(new ApiError(400,"Failed to delete the question"));
-
-    return res.status(200).json(new ApiResponse(200,{},"Deleted the question successfully"));
-
-})
-
-const fetchQuestion = asyncHandler(async (req,res) => {
-
-    const {uid} = req.body;
-
-    const parsedUid = Number(uid);
-
-    if(Number.isNaN(parsedUid))
-        return res.status(400).json(new ApiError(400,"Invalid UID"));
-
-    const findQn = await Question.findOne({uid:parsedUid});
-
-    if(!findQn)
-        return res.status(400).json(new ApiError(400,"Failed to find the question with the uid"));
-
-    return res.status(200).json(new ApiResponse(200,findQn,"Successfully fetched a Question"));
+    return res.status(200).json(new ApiResponse(200, question, "Question created successfully"));
 
 });
 
-const fetchAllQuestions = asyncHandler(async (req,res) => {
+const deleteQuestion = asyncHandler(async (req, res) => {
 
-    const questions = await Question.find();
+    const { uid } = req.body;
 
-    if(!questions)
-        return res.status(400).json(new ApiError(400,"Failed to fetch all question"));
+    const parsedUid = Number(uid);
 
-    return res.status(200).json(new ApiResponse(200,questions,"All questions fetched successfully"));
+    if (Number.isNaN(parsedUid))
+        return res.status(400).json(new ApiError(400, "Invalid UID"));
+
+    const findQn = await Question.findOne({ uid: parsedUid });
+
+    if (!findQn)
+        return res.status(400).json(new ApiError(400, "Failed to find the question with the uid"));
+
+    const deleteRes = await Question.findByIdAndDelete(findQn?._id);
+
+    if (!deleteRes)
+        return res.status(400).json(new ApiError(400, "Failed to delete the question"));
+
+    return res.status(200).json(new ApiResponse(200, {}, "Deleted the question successfully"));
+
+})
+
+const fetchQuestion = asyncHandler(async (req, res) => {
+
+    const { uid } = req.body;
+
+    const parsedUid = Number(uid);
+
+    if (Number.isNaN(parsedUid))
+        return res.status(400).json(new ApiError(400, "Invalid UID"));
+
+    const findQn = await Question.findOne({ uid: parsedUid });
+
+    if (!findQn)
+        return res.status(400).json(new ApiError(400, "Failed to find the question with the uid"));
+
+    return res.status(200).json(new ApiResponse(200, findQn, "Successfully fetched a Question"));
+
+});
+
+const fetchAllQuestions = asyncHandler(async (req, res) => {
+
+    const questions = await Question.aggregate([
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ])
+
+    if (!questions)
+        return res.status(400).json(new ApiError(400, "Failed to fetch all question"));
+
+    return res.status(200).json(new ApiResponse(200, questions, "All questions fetched successfully"));
 
 })
 

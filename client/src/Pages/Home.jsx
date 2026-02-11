@@ -40,7 +40,7 @@ const Home = () => {
         {/* Secondary Action: Leaderboard */}
         <div className="mt-16">
           <button 
-            onClick={() => navigate('/leaderboard-a')}
+            onClick={() => navigate('/leaderboard')}
             className="flex items-center gap-2 px-8 py-3 bg-white border-2 border-purple-100 text-purple-600 font-semibold rounded-full hover:bg-purple-50 hover:border-purple-200 transition-all duration-200"
           >
             <Trophy size={20} />

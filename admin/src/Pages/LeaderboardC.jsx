@@ -20,7 +20,7 @@ const LeaderboardC = () => {
       
       {/* Secondary Admin Navigation */}
       <div className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-screen mx-auto">
           <LeaderboardNavbar />
         </div>
       </div>
@@ -36,7 +36,7 @@ const LeaderboardC = () => {
             <p className="text-slate-500 font-medium">Tracking user engagement based on the total number of tests attempted.</p>
           </div>
           <div className="bg-purple-100 text-purple-700 px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest">
-            Type C (Engagement)
+            Most Active
           </div>
         </div>
 
@@ -121,7 +121,7 @@ const LeaderboardC = () => {
         {/* Footer info */}
         <div className="mt-6 flex justify-between items-center px-4">
           <p className="text-[11px] text-slate-400 font-medium">
-            This list identifies your most loyal and active users.
+            Showing top {data.length} active players.
           </p>
         </div>
       </main>

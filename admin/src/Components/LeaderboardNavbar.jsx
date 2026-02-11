@@ -12,20 +12,20 @@ const LeaderboardNavbar = () => {
     }`;
 
   return (
-    <div className="flex flex-row justify-center items-center py-4 bg-white">
+    <div className="flex flex-row justify-center items-center py-4 bg-slate-50">
       <div className="flex flex-row p-1.5 bg-slate-100/50 rounded-[2rem] gap-1">
         
-        <NavLink to='/leaderboard-a' className={tabClass}>
+        <NavLink to='/leaderboard' className={tabClass} end>
           <Star size={14} />
           <span>Highest Score</span>
         </NavLink>
 
-        <NavLink to='/leaderboard-b' className={tabClass}>
+        <NavLink to='/leaderboard/total-score' className={tabClass}>
           <Award size={14}  />
           <span>Total Score</span>
         </NavLink>
 
-        <NavLink to='/leaderboard-c' className={tabClass}>
+        <NavLink to='/leaderboard/highest-attempts' className={tabClass}>
           <Zap size={14}  />
           <span>Most Active</span>
         </NavLink>

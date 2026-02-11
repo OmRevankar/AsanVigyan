@@ -35,12 +35,12 @@ const Navbar = () => {
                         <span className="text-sm">History</span>
                     </NavLink>
                     
-                    <NavLink to='/q/all-questions' className={activeClass}>
+                    <NavLink to='/q' className={activeClass} end={false}>
                         <Database size={18} />
                         <span className="text-sm">Questions</span>
                     </NavLink>
                     
-                    <NavLink to='/leaderboard-a' className={activeClass}>
+                    <NavLink to='/leaderboard' className={activeClass}>
                         <Trophy size={18} />
                         <span className="text-sm">Leaderboard</span>
                     </NavLink>

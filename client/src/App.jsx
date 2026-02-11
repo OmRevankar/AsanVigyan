@@ -12,21 +12,30 @@ import { fetchUser } from './Slices/userSlice.jsx'
 import Update from './Pages/Update.jsx'
 import Profile from './Pages/Profile.jsx'
 import VisitUser from './Pages/VisitUser.jsx'
+import LeaderboardLayout from './Pages/LEaderboardLayout.jsx'
 
 const App = () => {
 
   const dispatch = useDispatch();
   const authState = useSelector(state => state.user.isAuthenticated);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
-    dispatch(fetchUser());
+    dispatch(fetchUser())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      setTimeout(() => {
+        window.location.reload();
+      },1500)
+    })
 
   },[])
   
 
   return (
-    <Router>
+    <>
 
       {
         authState ? 
@@ -37,9 +46,13 @@ const App = () => {
           <Route path='/login' element={<Home />}/>
           <Route path='/register' element={<Home />}/>
           <Route path='/game' element={<Game />}/>
-          <Route path='/leaderboard-a' element={<LeaderboardA />}/>
-          <Route path='/leaderboard-b' element={<LeaderboardB />}/>
-          <Route path='/leaderboard-c' element={<LeaderboardC />}/>
+
+          <Route path='/leaderboard' element={<LeaderboardLayout />}>
+            <Route index element={<LeaderboardA />}/>
+            <Route path='total-score' element={<LeaderboardB />}/>
+            <Route path='total-attempts' element={<LeaderboardC />}/>
+          </Route>
+
           <Route path='/update' element={<Update />}/>
           <Route path='/profile' element={<Profile />}/>
           <Route path='/u/:userId' element={<VisitUser />}/>
@@ -66,7 +79,7 @@ const App = () => {
         </Routes>
       }
 
-    </Router>
+    </>
   )
 }
 

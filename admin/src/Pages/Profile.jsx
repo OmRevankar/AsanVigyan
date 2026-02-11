@@ -69,7 +69,7 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-center gap-8 mb-10">
-          <div className="relative group cursor-pointer" onClick={() => navigate('/admin/update')}>
+          <div className="relative group cursor-pointer" onClick={() => navigate('/update')}>
             <div className="absolute inset-0 bg-purple-500 rounded-[2.5rem] rotate-6 group-hover:rotate-3 transition-transform duration-300" />
             <img 
               src={adminData.profileImage} 

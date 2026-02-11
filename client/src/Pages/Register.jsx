@@ -118,13 +118,27 @@ const Register = () => {
                                 rules={{ required: 'Date of Birth is required' }}
                                 render={({ field }) => (
                                     <DatePicker
-                                        placeholderText="Select birth date"
+                                        placeholderText="YYYY-MM-DD"
                                         selected={field.value}
                                         onChange={date => field.onChange(date)}
+
+                                        // 👇 Allow typing
+                                        onChangeRaw={(e) => {
+                                            const value = e.target.value;
+                                            field.onChange(new Date(value));
+                                        }}
+
                                         dateFormat="yyyy-MM-dd"
                                         maxDate={new Date()}
+                                        showYearDropdown
+                                        showMonthDropdown
+                                        dropdownMode="select"
+                                        yearDropdownItemNumber={100}
+                                        scrollableYearDropdown
+
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-purple-500 outline-none transition-all"
                                     />
+
                                 )}
                             />
                         </div>

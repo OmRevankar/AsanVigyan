@@ -13,7 +13,8 @@ const LeaderboardHead = () => {
       <div className="bg-slate-100/80 backdrop-blur-sm p-1.5 rounded-2xl flex flex-wrap md:flex-row gap-1">
         
         <NavLink 
-          to='/leaderboard-a' 
+          to='/leaderboard'
+          end
           className={({ isActive }) => `${tabBase} ${isActive ? activeTab : inactiveTab} flex-1 justify-center`}
         >
           <Trophy size={18} />
@@ -21,7 +22,7 @@ const LeaderboardHead = () => {
         </NavLink>
 
         <NavLink 
-          to='/leaderboard-b' 
+          to='/leaderboard/total-score' 
           className={({ isActive }) => `${tabBase} ${isActive ? activeTab : inactiveTab} flex-1 justify-center`}
         >
           <Award size={18} />
@@ -29,7 +30,7 @@ const LeaderboardHead = () => {
         </NavLink>
 
         <NavLink 
-          to='/leaderboard-c' 
+          to='/leaderboard/total-attempts' 
           className={({ isActive }) => `${tabBase} ${isActive ? activeTab : inactiveTab} flex-1 justify-center`}
         >
           <BarChart3 size={18} />

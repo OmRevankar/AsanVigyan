@@ -36,7 +36,7 @@ const Login = () => {
     }
 
     return (
-        <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
             {/* Login Card */}
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-purple-100/50 p-8 border border-slate-100">
                 
@@ -98,11 +98,11 @@ const Login = () => {
                     </div>
 
                     {/* Forgot Password Link (Visual Placeholder) */}
-                    <div className="flex justify-end">
+                    {/* <div className="flex justify-end">
                         <button type="button" className="text-xs font-semibold text-purple-600 hover:text-purple-700">
                             Forgot password?
                         </button>
-                    </div>
+                    </div> */}
 
                     {/* Submit Button */}
                     <button 

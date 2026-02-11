@@ -68,7 +68,7 @@ const Questions = () => {
             case 'latest': dispatch(sortByLatest()); break;
             case 'oldest': dispatch(sortByOldest()); break;
             case 'ascend': dispatch(sortByWordsAscend()); break;
-            case 'desc': dispatch(sortByWordsDesc()); break;
+            case 'descend': dispatch(sortByWordsDesc()); break;
             case 'desc': dispatch(sortByMarksDesc()); break;
             case 'asc': dispatch(sortByMarksAscend()); break;
             default: break;
@@ -161,7 +161,7 @@ const Questions = () => {
                             <option value="latest">Latest</option>
                             <option value="oldest">Oldest</option>
                             <option value="ascend">Alphabetic: Ascend</option>
-                            <option value="desc">Alphabetic: Desc</option>
+                            <option value="descend">Alphabetic: Desc</option>
                             <option value="desc">Marks: High to Low</option>
                             <option value="asc">Marks: Low to High</option>
                         </select>
