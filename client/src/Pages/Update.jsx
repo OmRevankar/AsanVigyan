@@ -3,17 +3,25 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../Slices/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { User, AtSign, Lock, Camera, Loader2, ArrowLeft, Save , Eye , EyeOff } from 'lucide-react';
+import { User, AtSign, Lock, Loader2, ArrowLeft, Save, Eye, EyeOff, Check } from 'lucide-react';
 import Navbar from '../Components/Navbar';
 
+import astronaut from '../Assets/astronaut.png'
+import bear from '../Assets/bear.png'
+import chicken from '../Assets/chicken.png'
+import giraffe from '../Assets/giraffe.png'
+import knight from '../Assets/knight.png'
+import meerkat from '../Assets/meerkat.png'
+import ninja from '../Assets/ninja.png'
+import panda from '../Assets/panda.png'
+import rabbit from '../Assets/rabbit.png'
+import robot from '../Assets/robot.png'
+
 const Update = () => {
-    const {
-        register,
-        handleSubmit,
-        watch,
-        reset,
-        formState: { errors, isSubmitting }
-    } = useForm();
+    const avatars = {
+        astronaut, bear, chicken, giraffe, knight, 
+        meerkat, ninja, panda, rabbit, robot
+    };
 
     const userData = useSelector(state => state.user.userData);
     const dispatch = useDispatch();
@@ -21,25 +29,33 @@ const Update = () => {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        setValue,
+        formState: { errors, isSubmitting }
+    } = useForm();
+
+    const selectedAvatar = watch('avatar');
+
     useEffect(() => {
         if (userData) {
             reset({
                 fullName: userData.fullName || "",
                 username: userData.username || "",
+                avatar: userData.avatar || "panda", // Initialize with current avatar
             });
         }
     }, [userData, reset]);
-
-    const watchImage = watch("profileImage");
-    const previewImage = (watchImage && watchImage.length > 0)
-        ? URL.createObjectURL(watchImage[0])
-        : userData?.profileImage;
 
     const onSubmit = async (data) => {
         const formData = new FormData();
         formData.append("fullName", data.fullName);
         formData.append("username", data.username);
-        if (data.profileImage?.[0]) formData.append("profileImage", data.profileImage[0]);
+        formData.append("avatar", data.avatar); // Sending avatar name string
+        
         if (data.password) formData.append("password", data.password);
 
         dispatch(updateUser(formData))
@@ -72,29 +88,44 @@ const Update = () => {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Profile Picture Card */}
+                    {/* Avatar Selection Card */}
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center">
-                        <div className="relative group">
-                            <div className="size-32 rounded-full overflow-hidden border-4 border-purple-50 shadow-inner bg-slate-100">
-                                <img
-                                    src={previewImage || 'https://via.placeholder.com/128'}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover transition-opacity group-hover:opacity-75"
-                                />
-                            </div>
-                            <label className="absolute inset-0 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-black/40 p-3 rounded-full text-white backdrop-blur-sm">
-                                    <Camera size={24} />
-                                </div>
-                                <input
-                                    type="file"
-                                    accept='image/*'
-                                    className="hidden"
-                                    {...register('profileImage')}
-                                />
-                            </label>
+                        <h2 className="text-sm font-bold text-purple-600 uppercase tracking-widest mb-6">Choose Your Avatar</h2>
+                        
+                        {/* Current Selection Preview */}
+                        <div className="size-32 rounded-full overflow-hidden border-4 border-purple-50 shadow-inner bg-slate-100 mb-8">
+                            <img
+                                src={avatars[selectedAvatar] || avatars['panda']}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
-                        <p className="mt-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Click photo to change</p>
+
+                        {/* Avatar Grid */}
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {Object.entries(avatars).map(([name, img]) => (
+                                <button
+                                    key={name}
+                                    type="button"
+                                    onClick={() => setValue('avatar', name)}
+                                    className={`relative size-12 rounded-xl overflow-hidden border-2 transition-all ${
+                                        selectedAvatar === name 
+                                        ? 'border-purple-600 scale-110 shadow-md shadow-purple-100' 
+                                        : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
+                                    }`}
+                                >
+                                    <img src={img} alt={name} className="w-full h-full object-cover" />
+                                    {selectedAvatar === name && (
+                                        <div className="absolute inset-0 bg-purple-600/10 flex items-center justify-center">
+                                            <div className="bg-purple-600 rounded-full p-0.5 text-white">
+                                                <Check size={8} strokeWidth={4} />
+                                            </div>
+                                        </div>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                        <input type="hidden" {...register('avatar')} />
                     </div>
 
                     {/* Information Card */}
@@ -155,7 +186,6 @@ const Update = () => {
                                     className="w-full pl-10 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all placeholder:text-slate-400"
                                 />
 
-                                {/* Eye Toggle Button */}
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}

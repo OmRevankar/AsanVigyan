@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { highScore } from '../Slices/leaderboardSlice';
 import { Trophy, User, ArrowUpRight, Hash, Star } from 'lucide-react';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const LeaderboardA = () => {
+
   const dispatch = useDispatch();
   const data = useSelector((state) => state.leaderboard.highScore);
 
@@ -17,7 +19,7 @@ const LeaderboardA = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
-      
+
       {/* Secondary Admin Navigation for Leaderboard Types */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-screen mx-auto">
@@ -59,17 +61,17 @@ const LeaderboardA = () => {
               data.map((item, i) => {
                 const rank = i + 1;
                 return (
-                  <div 
-                    key={item.userId || i} 
+                  <div
+                    key={item.userId || i}
                     className="grid grid-cols-12 px-8 py-5 items-center hover:bg-slate-50/80 transition-colors group"
                   >
                     {/* Rank Column */}
                     <div className="col-span-2">
                       <span className={`size-8 rounded-lg flex items-center justify-center font-black text-sm
-                        ${rank === 1 ? 'bg-amber-100 text-amber-600' : 
-                          rank === 2 ? 'bg-slate-100 text-slate-500' : 
-                          rank === 3 ? 'bg-orange-100 text-orange-700' : 
-                          'bg-slate-50 text-slate-400'}`}
+                        ${rank === 1 ? 'bg-amber-100 text-amber-600' :
+                          rank === 2 ? 'bg-slate-100 text-slate-500' :
+                            rank === 3 ? 'bg-orange-100 text-orange-700' :
+                              'bg-slate-50 text-slate-400'}`}
                       >
                         {rank}
                       </span>
@@ -77,19 +79,27 @@ const LeaderboardA = () => {
 
                     {/* User Column */}
                     <div className="col-span-6">
-                      <NavLink 
-                        to={`/u/${item.userId}`} 
+                      <NavLink
+                        to={`/u/${item.userId}`}
                         className="flex items-center gap-3 group/link"
                       >
-                        <div className="size-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 font-bold border border-purple-100">
-                          {item.username.charAt(0).toUpperCase()}
+                        {/* Avatar Image Container */}
+                        <div className="size-11 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm flex-shrink-0">
+                          <img
+                            src={avatarFunction(item.avatar)}
+                            alt={item.username}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
+
                         <div>
                           <p className="font-bold text-slate-700 group-hover/link:text-purple-600 transition-colors flex items-center gap-1">
                             {item.username}
                             <ArrowUpRight size={14} className="opacity-0 group-hover/link:opacity-100 transition-all transform translate-y-1 group-hover/link:translate-y-0" />
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium">ID: {item.userId?.slice(-6) || 'N/A'}</p>
+                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tight">
+                            {item.avatar || 'Panda'}
+                          </p>
                         </div>
                       </NavLink>
                     </div>

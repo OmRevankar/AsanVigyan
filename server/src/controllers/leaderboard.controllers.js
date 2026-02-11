@@ -24,6 +24,7 @@ const totalScore = asyncHandler(async (req, res) => {
             $addFields: {
                 username: "$user.username",
                 fullName: "$user.fullName",
+                avatar : "$user.avatar",
                 userId : "$user._id"
             }
         },
@@ -31,6 +32,7 @@ const totalScore = asyncHandler(async (req, res) => {
             $group: {
                 _id: "$userId",
                 username: { $first: "$username" },
+                avatar : {$first : "$avatar"},
                 lifeTimeScore: { $sum: "$score" }
             }
         },
@@ -69,6 +71,7 @@ const highScore = asyncHandler(async (req, res) => {
             $addFields: {
                 username: "$user.username",
                 fullName: "$user.fullName",
+                avatar : "$user.avatar"
             }
         },
         {
@@ -84,7 +87,8 @@ const highScore = asyncHandler(async (req, res) => {
                 fullName : 1,
                 score : 1,
                 createdAt : 1,
-                userId : 1
+                userId : 1,
+                avatar : 1
             }
         },
         {
@@ -116,13 +120,15 @@ const totalAttempts = asyncHandler(async (req, res) => {
         {
             $addFields: {
                 username: "$user.username",
-                fullName: "$user.fullName"
+                fullName: "$user.fullName",
+                avatar : "$user.avatar"
             }
         },
         {
             $group: {
                 _id: "$userId",
                 username: { $first: "$username" },
+                avatar : {$first : "$avatar"},
                 attempts: { $sum: 1 }
             }
         },

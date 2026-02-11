@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, LayoutDashboard, User , FlaskConical } from 'lucide-react'; // Optional: icons for a dashboard feel
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const Navbar = () => {
   const userData = useSelector((state) => state.user.userData);
@@ -60,7 +61,7 @@ const Navbar = () => {
             >
               <div className="absolute -inset-1 bg-gradient-to-tr from-purple-600 to-indigo-400 rounded-full opacity-0 group-hover:opacity-100 blur transition duration-300"></div>
               <img
-                src={userData?.profileImage || 'https://images.unsplash.com/photo-1705904506562-f28266845273?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwzfHx1c2VyJTIwaWNvbnxlbnwwfHx8fDE3NzAzMDI4Mjl8MA&ixlib=rb-4.1.0&fit=max&q=80'}
+                src={avatarFunction(userData.avatar) || 'https://images.unsplash.com/photo-1705904506562-f28266845273?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwzfHx1c2VyJTIwaWNvbnxlbnwwfHx8fDE3NzAzMDI4Mjl8MA&ixlib=rb-4.1.0&fit=max&q=80'}
                 alt="Profile"
                 className="relative size-10 rounded-full border-2 border-white object-cover shadow-sm"
               />

@@ -6,6 +6,7 @@ import Navbar from '../Components/Navbar';
 import { fetchUserTestHistory, sortByLatest, sortByMarksAscend, sortByMarksDesc, sortByOldest } from '../Slices/testSlice';
 import { Check, OctagonMinus, X, Calendar, Trophy, Hash, Clock, ChevronDown, ChevronUp, Filter } from 'lucide-react'; // Added Chevrons
 import { motion, AnimatePresence } from 'framer-motion'; // Added Framer Motion
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const User = () => {
   const { userId } = useParams();
@@ -57,7 +58,7 @@ const User = () => {
         <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden mb-10">
           <div className="bg-slate-900 p-8 text-white flex flex-col md:flex-row items-center gap-8">
             <div className="relative">
-              <img src={user.profileImage} alt="" className="size-32 rounded-3xl object-cover border-4 border-slate-700 shadow-2xl" />
+              <img src={avatarFunction(user.avatar)} alt="" className="size-32 rounded-3xl object-cover border-4 border-slate-700 shadow-2xl" />
               <div className="absolute -bottom-2 -right-2 bg-purple-500 p-2 rounded-xl shadow-lg">
                 <Trophy size={20} />
               </div>

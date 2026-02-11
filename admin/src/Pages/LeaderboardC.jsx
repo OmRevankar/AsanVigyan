@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { totalAttempts } from '../Slices/leaderboardSlice';
 import { NavLink } from 'react-router-dom';
 import { Zap, User, ArrowUpRight, Hash, BarChart3 } from 'lucide-react';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const LeaderboardC = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const LeaderboardC = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
-      
+
       {/* Secondary Admin Navigation */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-screen mx-auto">
@@ -59,8 +60,8 @@ const LeaderboardC = () => {
               data.map((item, i) => {
                 const rank = i + 1;
                 return (
-                  <div 
-                    key={item._id || i} 
+                  <div
+                    key={item._id || i}
                     className="grid grid-cols-12 px-8 py-5 items-center hover:bg-slate-50/80 transition-colors group"
                   >
                     {/* Rank Column */}
@@ -74,19 +75,27 @@ const LeaderboardC = () => {
 
                     {/* User Column */}
                     <div className="col-span-6">
-                      <NavLink 
-                        to={`/u/${item._id}`} 
+                      <NavLink
+                        to={`/u/${item._id}`}
                         className="flex items-center gap-3 group/link"
                       >
-                        <div className="size-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 font-bold border border-slate-200 group-hover:border-purple-200 group-hover:bg-purple-50 group-hover:text-purple-600 transition-all">
-                          {item.username.charAt(0).toUpperCase()}
+                        {/* Avatar Image with your existing hover effects */}
+                        <div className="size-10 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200 group-hover:border-purple-200 group-hover:bg-purple-50 transition-all">
+                          <img
+                            src={avatarFunction(item.avatar)}
+                            alt={item.username}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
+
                         <div>
                           <p className="font-bold text-slate-700 group-hover/link:text-purple-600 transition-colors flex items-center gap-1">
                             {item.username}
                             <ArrowUpRight size={14} className="opacity-0 group-hover/link:opacity-100 transition-all transform translate-y-1 group-hover/link:translate-y-0" />
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium">UID: {item._id.slice(-8)}</p>
+                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tight">
+                            UID: {item._id.slice(-8)}
+                          </p>
                         </div>
                       </NavLink>
                     </div>
@@ -98,8 +107,8 @@ const LeaderboardC = () => {
                           {item.attempts}
                         </span>
                         <div className="h-2 w-16 bg-slate-100 rounded-full overflow-hidden hidden sm:block">
-                          <div 
-                            className="h-full bg-purple-500 rounded-full" 
+                          <div
+                            className="h-full bg-purple-500 rounded-full"
                             style={{ width: `${Math.min((item.attempts / (data[0].attempts || 1)) * 100, 100)}%` }}
                           />
                         </div>

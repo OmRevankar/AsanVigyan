@@ -5,6 +5,7 @@ import { fetchAll, searchFullName, sortByFullName, sortByLatest, sortByMarksAsce
 import { Check, OctagonMinus, X, ChevronDown, ChevronUp, User, Clock, Calendar, Activity, ListChecks, Search, Filter } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -144,6 +145,7 @@ const Home = () => {
                     >
                       <div className="flex items-center gap-6">
                         <span className="text-slate-300 font-black text-xl">{(i + 1).toString().padStart(2, '0')}</span>
+                        <img src={avatarFunction(test.avatar)} alt="" className='rounded-full w-15 h-15' />
                         <div>
                           <NavLink
                             to={`/u/${test.userId}`}

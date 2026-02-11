@@ -5,28 +5,44 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../Slices/userSlice';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Calendar, Camera, Loader2, ArrowLeft, EyeOff, Eye } from 'lucide-react';
+import { User, Mail, Lock, Calendar, Camera, Loader2, ArrowLeft, EyeOff, Eye, Check } from 'lucide-react';
+
+import astronaut from '../Assets/astronaut.png'
+import bear from '../Assets/bear.png'
+import chicken from '../Assets/chicken.png'
+import giraffe from '../Assets/giraffe.png'
+import knight from '../Assets/knight.png'
+import meerkat from '../Assets/meerkat.png'
+import ninja from '../Assets/ninja.png'
+import panda from '../Assets/panda.png'
+import rabbit from '../Assets/rabbit.png'
+import robot from '../Assets/robot.png'
 
 const Register = () => {
-    const [preview, setPreview] = useState(null);
+    // Mapping avatars for easy iteration
+    const avatars = {
+        astronaut, bear, chicken, giraffe, knight, 
+        meerkat, ninja, panda, rabbit, robot
+    };
+
     const [showPassword, setShowPassword] = useState(false);
     const {
         register,
         control,
         handleSubmit,
         reset,
+        watch,
+        setValue,
         formState: { errors, isSubmitting },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            avatar: 'panda' // Default avatar selection
+        }
+    });
 
+    const selectedAvatar = watch('avatar');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setPreview(URL.createObjectURL(file));
-        }
-    };
 
     const onSubmit = (data) => {
         const formData = new FormData();
@@ -34,7 +50,7 @@ const Register = () => {
         formData.append('username', data.username);
         formData.append('password', data.password);
         formData.append('dob', data.dob.toISOString().split('T')[0]);
-        formData.append('profileImage', data.profileImage[0]);
+        formData.append('avatar', data.avatar); // Sending avatar name string
 
         dispatch(registerUser(formData))
             .unwrap()
@@ -60,27 +76,33 @@ const Register = () => {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
 
-                    {/* Profile Image Upload with Preview */}
-                    <div className="flex flex-col items-center mb-4">
-                        <div className="relative group cursor-pointer">
-                            <div className="size-24 rounded-full bg-slate-100 border-4 border-white shadow-md overflow-hidden flex items-center justify-center relative">
-                                {preview ? (
-                                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                                ) : (
-                                    <Camera className="text-slate-400" size={32} />
-                                )}
-                            </div>
-                            <label className="absolute bottom-0 right-0 bg-purple-600 p-2 rounded-full text-white shadow-lg cursor-pointer hover:bg-purple-700 transition-colors border-2 border-white">
-                                <Camera size={14} />
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    {...register('profileImage', { required: "Profile photo is required", onChange: handleImageChange })}
-                                />
-                            </label>
+                    {/* Avatar Selection Grid */}
+                    <div className="space-y-4">
+                        <label className="text-xs font-bold text-slate-500 uppercase ml-1 block text-center">Choose Your Avatar</label>
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {Object.entries(avatars).map(([name, img]) => (
+                                <button
+                                    key={name}
+                                    type="button"
+                                    onClick={() => setValue('avatar', name)}
+                                    className={`relative size-14 rounded-2xl overflow-hidden border-4 transition-all ${
+                                        selectedAvatar === name 
+                                        ? 'border-purple-600 scale-110 shadow-lg shadow-purple-100' 
+                                        : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
+                                    }`}
+                                >
+                                    <img src={img} alt={name} className="w-full h-full object-cover" />
+                                    {selectedAvatar === name && (
+                                        <div className="absolute inset-0 bg-purple-600/20 flex items-center justify-center">
+                                            <div className="bg-purple-600 rounded-full p-0.5 text-white">
+                                                <Check size={10} strokeWidth={4} />
+                                            </div>
+                                        </div>
+                                    )}
+                                </button>
+                            ))}
                         </div>
-                        {errors.profileImage && <p className="text-xs text-red-500 mt-2 font-medium">{errors.profileImage.message}</p>}
+                        <input type="hidden" {...register('avatar')} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -121,13 +143,10 @@ const Register = () => {
                                         placeholderText="YYYY-MM-DD"
                                         selected={field.value}
                                         onChange={date => field.onChange(date)}
-
-                                        // 👇 Allow typing
                                         onChangeRaw={(e) => {
                                             const value = e.target.value;
                                             field.onChange(new Date(value));
                                         }}
-
                                         dateFormat="yyyy-MM-dd"
                                         maxDate={new Date()}
                                         showYearDropdown
@@ -135,10 +154,8 @@ const Register = () => {
                                         dropdownMode="select"
                                         yearDropdownItemNumber={100}
                                         scrollableYearDropdown
-
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-purple-500 outline-none transition-all"
                                     />
-
                                 )}
                             />
                         </div>
@@ -151,7 +168,7 @@ const Register = () => {
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input
-                                type={showPassword ? 'text' : 'password'} // Dynamic Type
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder='••••••••'
                                 {...register('password', {
                                     pattern: {
@@ -161,7 +178,6 @@ const Register = () => {
                                 })}
                                 className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all"
                             />
-                            {/* Toggle Button */}
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}

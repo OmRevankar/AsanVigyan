@@ -31,10 +31,10 @@ const userSchema = new mongoose.Schema(
         //     unique : true
         // },
 
-        profileImage:{
-            type:String,
-            required:true
-        },
+        // profileImage:{
+        //     type:String,
+        //     required:true
+        // },
 
         password:{
             type:String,
@@ -44,6 +44,13 @@ const userSchema = new mongoose.Schema(
         dob : {
             type:Date,
             required:true
+        },
+
+        avatar : {
+            type : String,
+            required : true,
+            default :'panda',
+            enum : ['astronaut','bear','chicken','giraffe','knight','meerkat','ninja','panda','rabbit','robot']
         },
 
         refreshToken : {

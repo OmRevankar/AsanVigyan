@@ -40,13 +40,13 @@ const startSession = async (user_id) => {
 
 const registerUser = asyncHandler(async (req, res) => {
 
-    const { fullName, password, username, dob } = req.body;
+    const { fullName, password, username, dob , avatar } = req.body;
 
-    console.log("HI")
+    // console.log("HI")
 
-    if ([fullName, password, username, dob].some((a) => !a || a.trim() === "")) {
+    if ([fullName, password, username, dob , avatar].some((a) => !a || a.trim() === "")) {
 
-        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        // if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "Details are missing"));
     }
 
@@ -55,27 +55,28 @@ const registerUser = asyncHandler(async (req, res) => {
     const existingUser = await User.findOne({ username })
 
     if (existingUser) {
-        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        // if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json(new ApiError(400, "User with same username already exits"));
     }
 
-    const profileImageLocalPath = req.file?.path;
+    // const profileImageLocalPath = req.file?.path;
 
-    if (!profileImageLocalPath)
-        return res.status(400).json(new ApiError(400, "Profile Image missing"));
+    // if (!profileImageLocalPath)
+    //     return res.status(400).json(new ApiError(400, "Profile Image missing"));
 
 
-    const cloudinaryResp = await uploadOnCloudinary(profileImageLocalPath);
+    // const cloudinaryResp = await uploadOnCloudinary(profileImageLocalPath);
 
-    if (!cloudinaryResp)
-        return res.status(400).json(new ApiError(400, "Failed to upload on Cloudinary"));
+    // if (!cloudinaryResp)
+    //     return res.status(400).json(new ApiError(400, "Failed to upload on Cloudinary"));
 
     const user = await User.create({
         fullName,
         username,
         password,
         dob,
-        profileImage: cloudinaryResp?.url
+        avatar
+        // profileImage: cloudinaryResp?.url,
     })
 
     const findUser = await User.findById(user?._id).select("-password -refreshToken");
@@ -166,12 +167,17 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const updateUser = asyncHandler(async (req, res) => {
 
-    const { fullName, username, password } = req.body;
+    const { fullName, username, password , avatar } = req.body;
 
     if ([fullName, username].some((a) => !a || a.trim() === "")) {
-        if (req.file?.path) fs.unlinkSync(req.file?.path);
+        // if (req.file?.path) fs.unlinkSync(req.file?.path);
         return res.status(400).json("Incomplete details");
     }
+
+    const ava = ['astronaut','bear','chicken','giraffe','knight','meerkat','ninja','panda','rabbit','robot'];
+
+    if(avatar && !ava.includes(avatar))
+        return res.status(400).json("Invalid Avatar details");
 
     const findUser = await User.findOne({ username });
 
@@ -180,23 +186,23 @@ const updateUser = asyncHandler(async (req, res) => {
         return res.status(400).json(new ApiError(400, "Username is not available"));
     }
 
-    const profileImageLocalPath = req.file?.path;
-    let uploadRes;
+    // const profileImageLocalPath = req.file?.path;
+    // let uploadRes;
 
-    if (profileImageLocalPath) {
+    // if (profileImageLocalPath) {
 
-        uploadRes = await uploadOnCloudinary(profileImageLocalPath);
+    //     uploadRes = await uploadOnCloudinary(profileImageLocalPath);
 
-        if (!uploadRes) {
-            return res.status(400).json(new ApiError(400, "Failed to upload on cloudinary"));
-        }
+    //     if (!uploadRes) {
+    //         return res.status(400).json(new ApiError(400, "Failed to upload on cloudinary"));
+    //     }
 
-        const cloudinaryPublicId = req.user?.profileImage.split('/');
-        const deleteRes = await deleteFromCloudinary(cloudinaryPublicId[cloudinaryPublicId.length - 1].split('.')[0]);
+    //     const cloudinaryPublicId = req.user?.profileImage.split('/');
+    //     const deleteRes = await deleteFromCloudinary(cloudinaryPublicId[cloudinaryPublicId.length - 1].split('.')[0]);
 
-        if (!deleteRes)
-            console.log("Failed to Delete the old image from Cloudinary");
-    }
+    //     if (!deleteRes)
+    //         console.log("Failed to Delete the old image from Cloudinary");
+    // }
 
     let hashedPassword;
 
@@ -209,7 +215,8 @@ const updateUser = asyncHandler(async (req, res) => {
                 fullName,
                 username,
                 password: hashedPassword ? hashedPassword : undefined,
-                profileImage: profileImageLocalPath ? uploadRes?.url : undefined
+                avatar : avatar ? avatar : undefined
+                /*profileImage: profileImageLocalPath ? uploadRes?.url : undefined */
             }
         },
         {
@@ -260,7 +267,8 @@ const fetchUser = asyncHandler(async (req, res) => {
                 totalAttempts: { $sum: 1 },
                 username: { $first: "$user.username" },
                 fullName: { $first: "$user.fullName" },
-                profileImage: { $first: "$user.profileImage" },
+                avatar : {$first : "$user.avatar"},
+                /*profileImage: { $first: "$user.profileImage" },*/
                 dob: { $first: "$user.dob" },
 
             }
@@ -337,7 +345,8 @@ const fetchOtherUser = asyncHandler(async (req, res) => {
                 totalAttempts: { $sum: 1 },
                 username: { $first: "$user.username" },
                 fullName: { $first: "$user.fullName" },
-                profileImage: { $first: "$user.profileImage" },
+                avatar : {$first : "$user.avatar"},
+                /*profileImage: { $first: "$user.profileImage" },*/
                 dob: { $first: "$user.dob" },
 
             }

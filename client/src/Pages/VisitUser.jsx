@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchOtherUser } from '../Slices/otheruserSlice';
 import { ArrowLeft, Zap, Target, Award, Calendar, User as UserIcon, Trophy } from 'lucide-react';
 import Navbar from '../Components/Navbar';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const VisitUser = () => {
   const { userId } = useParams();
@@ -53,7 +54,7 @@ const VisitUser = () => {
             <div className="relative flex flex-col md:flex-row items-end gap-6 -mt-12 mb-8 text-center md:text-left">
               <div className="relative mx-auto md:mx-0">
                 <img 
-                  src={userData.profileImage} 
+                  src={avatarFunction(userData.avatar)} 
                   alt={userData.username} 
                   className="size-32 md:size-40 rounded-3xl object-cover ring-8 ring-white shadow-xl bg-white" 
                 />

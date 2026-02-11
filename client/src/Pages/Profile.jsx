@@ -6,6 +6,8 @@ import { logoutUser } from '../Slices/userSlice';
 import { X, OctagonMinus, Check, LogOut, Edit3, Award, Zap, Target, Calendar, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import Navbar from '../Components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion'; // Added Framer Motion
+import { avatarFunction } from '../Helper/avatarSelector';
+
 
 // LogoutDialogue component remains the same...
 const LogoutDialogue = ({ isOpen, setIsOpen }) => {
@@ -69,7 +71,7 @@ const Profile = () => {
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative">
-              <img src={userData.profileImage} alt="Profile" className="size-32 rounded-3xl object-cover ring-4 ring-purple-50" />
+              <img src={avatarFunction(userData.avatar)} alt="avatar" className="size-32 rounded-full object-cover ring-4 ring-purple-50" />
               <button onClick={() => navigate('/update')} className="absolute -bottom-2 -right-2 p-2 bg-white shadow-lg rounded-xl border border-slate-100 text-purple-600 hover:text-purple-700">
                 <Edit3 size={18} />
               </button>

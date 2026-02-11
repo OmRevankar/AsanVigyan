@@ -26,9 +26,9 @@ const App = () => {
     .unwrap()
     .then(() => {})
     .catch((e) => {
-      setTimeout(() => {
-        window.location.reload();
-      },1500)
+      // setTimeout(() => {
+      //   window.location.reload();
+      // },1500)
     })
 
   },[])

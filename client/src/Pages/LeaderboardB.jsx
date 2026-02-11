@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trophy, Crown, Zap } from 'lucide-react';
 import LeaderboardHead from '../Components/LeaderboardHead';
 import Navbar from '../Components/Navbar';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const LeaderboardB = () => {
   const dispatch = useDispatch();
@@ -123,6 +124,7 @@ const LeaderboardB = () => {
 
                   <div className="col-span-7 flex items-center gap-3">
                     <div>
+                      <img src={avatarFunction(item.avatar)} className='rounded-full w-15 h-15' alt="" />
                       <p className={`font-bold text-sm ${isCurrentUser ? 'text-purple-700' : 'text-slate-700'}`}>
                         {item.username} {isCurrentUser && <span className="ml-2 text-[10px] bg-purple-600 text-white px-1.5 py-0.5 rounded-full uppercase">You</span>}
                       </p>

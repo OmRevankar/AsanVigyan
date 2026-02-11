@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { totalScore } from '../Slices/leaderboardSlice';
 import { NavLink } from 'react-router-dom';
 import { Award, User, ArrowUpRight, Hash, Activity } from 'lucide-react';
+import { avatarFunction } from '../Helper/avatarSelector';
 
 const LeaderboardB = () => {
+
   const dispatch = useDispatch();
   const data = useSelector((state) => state.leaderboard.totalScore);
 
@@ -17,7 +19,7 @@ const LeaderboardB = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
-      
+
       {/* Secondary Admin Navigation */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-screen mx-auto">
@@ -57,10 +59,11 @@ const LeaderboardB = () => {
           <div className="divide-y divide-slate-50">
             {data.length > 0 ? (
               data.map((item, i) => {
+                console.log(item.avatar)
                 const rank = i + 1;
                 return (
-                  <div 
-                    key={item._id || i} 
+                  <div
+                    key={item._id || i}
                     className="grid grid-cols-12 px-8 py-5 items-center hover:bg-slate-50/80 transition-colors group"
                   >
                     {/* Rank Column */}
@@ -74,19 +77,27 @@ const LeaderboardB = () => {
 
                     {/* User Column */}
                     <div className="col-span-6">
-                      <NavLink 
-                        to={`/u/${item._id}`} 
+                      <NavLink
+                        to={`/u/${item._id}`}
                         className="flex items-center gap-3 group/link"
                       >
-                        <div className="size-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 font-bold border border-indigo-100">
-                          {item.username.charAt(0).toUpperCase()}
+                        {/* Avatar Image Implementation */}
+                        <div className="rounded-full size-10 bg-indigo-50 rounded-xl flex items-center justify-center overflow-hidden border border-indigo-100">
+                          <img
+                            src={avatarFunction(item.avatar)}
+                            alt={item.username}
+                            className="rounded-full w-full h-full object-cover"
+                          />
                         </div>
+
                         <div>
                           <p className="font-bold text-slate-700 group-hover/link:text-indigo-600 transition-colors flex items-center gap-1">
                             {item.username}
                             <ArrowUpRight size={14} className="opacity-0 group-hover/link:opacity-100 transition-all transform translate-y-1 group-hover/link:translate-y-0" />
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium tracking-tight">UID: {item._id.slice(-8)}</p>
+                          <p className="text-[10px] text-slate-400 font-medium tracking-tight">
+                            UID: {item._id.slice(-8)}
+                          </p>
                         </div>
                       </NavLink>
                     </div>

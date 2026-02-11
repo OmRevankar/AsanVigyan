@@ -299,6 +299,7 @@ const fetchTest = asyncHandler(async (req, res) => {
                 score: { $first: "$score" },
                 username: { $first: "$username" },
                 fullName: { $first: "$fullName" },
+                avatar : {$first : "$user.avatar"},
                 userId: { $first: "$userId" },
                 responses: { $push: "$responses" },
             }
@@ -358,6 +359,7 @@ const fetchAll = asyncHandler(async (req, res) => {
                 userId: { $first: "$userId" },
                 username: { $first: "$user.username" },
                 fullName: { $first: "$user.fullName" },
+                avatar : {$first : "$user.avatar"},
                 score: { $first: "$score" }
             }
         },
