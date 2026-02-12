@@ -11,6 +11,7 @@ const UpdateQuestion = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const questionData = useSelector(state => state.question.singleQuestion);
+  const auth = useSelector(state => state.admin.isAuthenticated);
 
   const {
     register,
@@ -78,7 +79,13 @@ const UpdateQuestion = () => {
       .then(() => {
         navigate('/all-questions');
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+      });
   };
 
   return (

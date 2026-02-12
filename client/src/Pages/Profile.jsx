@@ -48,10 +48,22 @@ const Profile = () => {
 
   const userData = useSelector(state => state.user.userData);
   const testHistory = useSelector(state => state.test.testHistory);
+  const auth = useSelector(state => state.user.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => { dispatch(fetchUserTestHistory()); }, [dispatch]);
+  useEffect(() => { 
+    dispatch(fetchUserTestHistory())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
+   }, [dispatch]);
 
   const formatDOB = (dob) => dob ? new Date(dob).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: "numeric" }) : 'N/A';
   const formatTime = (time) => time ? new Date(time).toLocaleString(undefined, { hour: "numeric", minute: "2-digit", hour12: true }) : "N/A";

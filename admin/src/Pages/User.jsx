@@ -13,6 +13,7 @@ const User = () => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.userData);
   const testHistory = useSelector(state => state.test.userTestHistory);
+  const auth = useSelector((state) => state.admin.isAuthenticated);
 
   // State to track which test is expanded
   const [expandedTestId, setExpandedTestId] = useState(null);
@@ -30,7 +31,18 @@ const User = () => {
 
   useEffect(() => {
     const data = { userId };
-    dispatch(fetchUser(data));
+
+    dispatch(fetchUser(data))
+      .unwrap()
+      .then(() => { })
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+      })
+
     dispatch(fetchUserTestHistory(data));
   }, [dispatch, userId]);
 
@@ -220,7 +232,7 @@ const User = () => {
               (
                 <div className="bg-white rounded-[2.5rem] p-12 text-center border-2 border-dashed border-slate-200">
                   <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                    No records found 
+                    No records found
                   </p>
                 </div>
               )

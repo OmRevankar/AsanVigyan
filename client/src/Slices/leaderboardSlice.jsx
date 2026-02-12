@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BACKEND_URL } from "../Helper/constants";
 import toast from "react-hot-toast";
 
-
 const initialState = {
     highScore : [] ,
     totalScore : [] ,

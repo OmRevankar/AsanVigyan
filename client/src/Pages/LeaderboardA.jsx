@@ -10,11 +10,20 @@ import { avatarFunction } from '../Helper/avatarSelector';
 const LeaderboardA = () => {
   const dispatch = useDispatch();
   const leaderboard = useSelector((state) => state.leaderboard.highScore);
+  const auth = useSelector((state) => state.user.isAuthenticated);
   const user = useSelector((state) => state.user.userData);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(highScore());
+    dispatch(highScore())
+      .unwrap()
+      .then(() => { })
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => { window.location.reload() }, 1000);
+        }
+      })
+
   }, [dispatch]);
 
   const topThree = leaderboard.slice(0, 3);
@@ -37,7 +46,7 @@ const LeaderboardA = () => {
             const isFirst = index === 0;
             const isSecond = index === 1;
             const isThird = index === 2;
-            
+
             // FIX 2: Check if this podium user is the logged-in user
             const isCurrentUser = item.userId === user._id;
 
@@ -56,7 +65,7 @@ const LeaderboardA = () => {
                   {isFirst && <Crown className="absolute -top-7 left-1/2 -translate-x-1/2 text-amber-500 animate-bounce" size={32} fill="currentColor" />}
 
                   {/* FIX 1 applied here: onClick added to the medallion container */}
-                  <div 
+                  <div
                     className={`relative size-20 md:size-24 rounded-full bg-white border-4 ${rankAssets[index].border} ${rankAssets[index].shadow} shadow-xl p-1 transition-transform hover:scale-110 cursor-pointer`}
                     onClick={() => handleUserClick(item.userId)}
                   >
@@ -73,7 +82,7 @@ const LeaderboardA = () => {
                   <p className={`font-bold truncate w-full px-2 text-sm md:text-base relative z-10 ${isCurrentUser ? 'text-purple-700' : 'text-slate-800'}`}>
                     {item.username}
                   </p>
-                  
+
                   {/* FIX 2: "YOU" tag for Podium */}
                   {isCurrentUser && (
                     <span className="relative z-10 mb-1 text-[9px] bg-purple-600 text-white px-2 py-0.5 rounded-full uppercase font-black">
@@ -94,7 +103,7 @@ const LeaderboardA = () => {
           <div className="grid grid-cols-12 px-6 py-4 border-b border-slate-50 text-xs font-bold text-slate-400 uppercase tracking-widest">
             <div className="col-span-2">Rank</div>
             <div className="col-span-7">Player</div>
-            <div className="col-span-3 text-right flex items-center justify-end gap-1">Score <Zap size={12} className="fill-purple-600 text-purple-600"/></div>
+            <div className="col-span-3 text-right flex items-center justify-end gap-1">Score <Zap size={12} className="fill-purple-600 text-purple-600" /></div>
           </div>
 
           <div className="divide-y divide-slate-50">

@@ -19,6 +19,7 @@ const Game = () => {
   };
 
   const { testData, questionData, isLoading } = useSelector(state => state.test);
+  const auth = useSelector((state) => state.user.isAuthenticated);
 
   const [responses, setResponses] = useState([]);
   const [gameState, setGameState] = useState(GAME_STATE.MODE_SELECTION); // Start here
@@ -53,7 +54,13 @@ const Game = () => {
 
     dispatch(startTest(data)).unwrap().then((res) => {
       setResponses(res.data.map(qn => ({ uid: qn.uid, selectedOption: 0 })));
-    }).catch(console.error);
+    }).catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    });
 
     const interval = setInterval(() => {
       setInstructionTimer(prev => {

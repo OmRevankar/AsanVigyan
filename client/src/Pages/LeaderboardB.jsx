@@ -11,10 +11,21 @@ const LeaderboardB = () => {
   const dispatch = useDispatch();
   const leaderboard = useSelector((state) => state.leaderboard.totalScore);
   const user = useSelector((state) => state.user.userData);
+  const auth = useSelector((state) => state.user.isAuthenticated);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(totalScore());
+    dispatch(totalScore())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
+
   }, [dispatch]);
 
   // Separate Top 3 for the "Podium" and the rest for the "List"

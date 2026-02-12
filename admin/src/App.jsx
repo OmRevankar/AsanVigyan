@@ -32,8 +32,7 @@ const App = () => {
 
     })
     .catch((e) => {
-      if(!isAuth && window.location.pathname !== '/')
-        window.location.reload();
+      
     })
 
   }, [])

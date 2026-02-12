@@ -11,9 +11,19 @@ const LeaderboardA = () => {
 
   const dispatch = useDispatch();
   const data = useSelector((state) => state.leaderboard.highScore);
+  const auth = useSelector((state) => state.admin.isAuthenticated);
 
   useEffect(() => {
-    dispatch(highScore());
+    dispatch(highScore())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
   }, [dispatch]);
 
   return (

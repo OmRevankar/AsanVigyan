@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteQuestion, fetchAllQuestions, search, sortByLatest, sortByMarksAscend, sortByMarksDesc, sortByOldest, sortByWordsAscend, sortByWordsDesc } from '../Slices/questionSlice';
-import { Search , Filter, Trash, Edit3, Plus, ChevronDown, ChevronUp, Image as ImageIcon, CheckCircle2, AlertCircle, Database, Layers, Sparkles } from 'lucide-react'
+import { Search, Filter, Trash, Edit3, Plus, ChevronDown, ChevronUp, Image as ImageIcon, CheckCircle2, AlertCircle, Database, Layers, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../Components/Navbar';
@@ -54,9 +54,19 @@ const Questions = () => {
     const [seletedQUid, setSelectedQUid] = useState();
     const [expandedId, setExpandedId] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const auth = useSelector((state) => state.admin.isAuthenticated);
 
     useEffect(() => {
         dispatch(fetchAllQuestions())
+            .unwrap()
+            .then(() => { })
+            .catch((e) => {
+                if (auth) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000)
+                }
+            })
     }, [dispatch])
 
     // Calculated Stats
@@ -79,11 +89,11 @@ const Questions = () => {
         const value = e.target.value;
         setSearchTerm(value);
         if (value === "") {
-          dispatch(fetchAllQuestions()); // Reset list when search is cleared
+            dispatch(fetchAllQuestions()); // Reset list when search is cleared
         } else {
-          dispatch(search({ key: value }));
+            dispatch(search({ key: value }));
         }
-      };
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">

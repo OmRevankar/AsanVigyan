@@ -12,9 +12,20 @@ const Home = () => {
   const testHistory = useSelector(state => state.test.testHistory);
   const [expandedId, setExpandedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const auth = useSelector((state) => state.admin.isAuthenticated);
 
   useEffect(() => {
-    dispatch(fetchAll());
+    dispatch(fetchAll())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
+    
   }, [dispatch]);
 
   const toggleExpand = (id) => {

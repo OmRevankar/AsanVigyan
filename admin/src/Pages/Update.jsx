@@ -16,14 +16,15 @@ const Update = () => {
   } = useForm();
 
   const adminData = useSelector(state => state.admin.adminData);
+  const auth = useSelector(state => state.admin.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [showPassword, setShowPassword] = useState(false);
 
   const watchImage = watch('profileImage');
-  const previewImage = (watchImage && watchImage.length > 0) 
-    ? URL.createObjectURL(watchImage[0]) 
+  const previewImage = (watchImage && watchImage.length > 0)
+    ? URL.createObjectURL(watchImage[0])
     : adminData?.profileImage;
 
   useEffect(() => {
@@ -49,17 +50,21 @@ const Update = () => {
         navigate('/profile');
       })
       .catch((e) => {
-        console.error(e);
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
       })
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
-      
+
       <main className="max-w-2xl mx-auto px-6 py-12">
         {/* Back Button */}
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-slate-400 hover:text-slate-600 font-bold text-sm mb-8 transition-colors group"
         >
@@ -74,7 +79,7 @@ const Update = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-8">
-            
+
             {/* Profile Image Upload */}
             <div className="flex flex-col items-center">
               <div className="relative group">
@@ -101,8 +106,8 @@ const Update = () => {
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
                 <div className="relative">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className={`w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.fullName ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-purple-400 focus:bg-white'}`}
                     placeholder="John Doe"
                     {...register('fullName', {
@@ -111,7 +116,7 @@ const Update = () => {
                     })}
                   />
                 </div>
-                {errors.fullName && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.fullName.message}</p>}
+                {errors.fullName && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14} /> {errors.fullName.message}</p>}
               </div>
 
               {/* Username */}
@@ -119,8 +124,8 @@ const Update = () => {
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Username</label>
                 <div className="relative">
                   <AtSign className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className={`w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.username ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-purple-400 focus:bg-white'}`}
                     placeholder="admin_user"
                     {...register('username', {
@@ -129,7 +134,7 @@ const Update = () => {
                     })}
                   />
                 </div>
-                {errors.username && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.username.message}</p>}
+                {errors.username && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14} /> {errors.username.message}</p>}
               </div>
 
               {/* Password */}
@@ -137,18 +142,18 @@ const Update = () => {
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">New Password (Leave blank to keep current)</label>
                 <div className="relative">
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
-                  <input 
+                  <input
                     type={showPassword ? "text" : "password"}
                     className={`w-full pl-14 pr-14 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.password ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-purple-400 focus:bg-white'}`}
                     placeholder="••••••••"
                     {...register('password', {
-                      pattern: { 
-                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/, 
-                        message: "Must include uppercase, lowercase, number, and symbol" 
+                      pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                        message: "Must include uppercase, lowercase, number, and symbol"
                       }
                     })}
                   />
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors"
@@ -156,12 +161,12 @@ const Update = () => {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-                {errors.password && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.password.message}</p>}
+                {errors.password && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14} /> {errors.password.message}</p>}
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting}
               className="w-full flex items-center justify-center gap-3 bg-purple-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-purple-700 transition-all shadow-xl shadow-purple-100 disabled:opacity-50 active:scale-[0.98]"
             >

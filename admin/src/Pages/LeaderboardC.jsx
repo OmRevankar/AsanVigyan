@@ -10,9 +10,19 @@ import { avatarFunction } from '../Helper/avatarSelector';
 const LeaderboardC = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.leaderboard.totalAttempts);
+  const auth = useSelector((state) => state.admin.isAuthenticated);
 
   useEffect(() => {
-    dispatch(totalAttempts());
+    dispatch(totalAttempts())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
   }, [dispatch]);
 
   return (

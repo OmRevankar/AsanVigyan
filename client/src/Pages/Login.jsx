@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../Slices/userSlice';
 import { useNavigate, Link } from 'react-router-dom'
-import { Lock, User, Loader2, EyeOff, Eye } from 'lucide-react'; // Icons for professional touch
+import { Lock, User, Loader2, EyeOff, Eye, AlertCircle } from 'lucide-react'; // Icons for professional touch
 
 const Login = () => {
     const {
@@ -94,7 +94,7 @@ const Login = () => {
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
-                        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+                        {errors.password && <p className="text-xs text-red-500"><AlertCircle size={14}/>{errors.password.message}</p>}
                     </div>
 
                     {/* Forgot Password Link (Visual Placeholder) */}

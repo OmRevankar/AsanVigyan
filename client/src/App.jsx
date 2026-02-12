@@ -13,6 +13,7 @@ import Update from './Pages/Update.jsx'
 import Profile from './Pages/Profile.jsx'
 import VisitUser from './Pages/VisitUser.jsx'
 import LeaderboardLayout from './Pages/LEaderboardLayout.jsx'
+import ScrollToTop from './Components/ScrollToTop.jsx'
 
 const App = () => {
 
@@ -26,17 +27,14 @@ const App = () => {
     .unwrap()
     .then(() => {})
     .catch((e) => {
-      // setTimeout(() => {
-      //   window.location.reload();
-      // },1500)
+      
     })
-
   },[])
   
 
   return (
     <>
-
+      <ScrollToTop />
       {
         authState ? 
 

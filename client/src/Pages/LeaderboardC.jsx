@@ -12,9 +12,19 @@ const LeaderboardC = () => {
   const navigate = useNavigate();
   const leaderboard = useSelector((state) => state.leaderboard.totalAttempts);
   const user = useSelector((state) => state.user.userData);
+  const auth = useSelector((state) => state.user.isAuthenticated);
 
   useEffect(() => {
-    dispatch(totalAttempts());
+    dispatch(totalAttempts())
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
   }, [dispatch]);
 
   const topThree = leaderboard.slice(0, 3);
