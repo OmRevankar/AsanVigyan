@@ -111,7 +111,7 @@ const Navbar = () => {
             className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 text-slate-800 mt-4"
           >
             <img
-              src={avatarFunction(userData?.avatar)}
+              src={avatarFunction(userData?.avatar) || 'https://images.unsplash.com/photo-1705904506562-f28266845273?fit=max&q=80' }
               alt="Profile"
               className="size-8 rounded-full object-cover border border-purple-200"
             />

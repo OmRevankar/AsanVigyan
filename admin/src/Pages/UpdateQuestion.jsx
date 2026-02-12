@@ -99,39 +99,41 @@ const UpdateQuestion = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="mb-8 flex justify-between items-end">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-24 md:py-12 bg-slate-50">
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight uppercase flex items-center gap-3">
-              <RotateCcw className="text-blue-600" size={32} />
+            <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight uppercase flex items-center gap-3">
+              <RotateCcw className="text-blue-600 shrink-0" size={32} />
               Update Question
             </h1>
-            <p className="text-slate-500 font-medium italic mt-1">Editing UID: <span className="text-blue-600 font-mono not-italic">{uid}</span></p>
+            <p className="text-slate-500 font-medium italic mt-1 text-sm">
+              Editing UID: <span className="text-blue-600 font-mono not-italic break-all">{uid}</span>
+            </p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/all-questions')}
-            className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors mb-2"
+            className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors sm:mb-2"
           >
             Back to List
           </button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-10">
+          <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-6 md:p-10">
 
             {/* Description */}
             <div className="mb-8">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Question Description</label>
               <textarea
                 rows="3"
-                className={`w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.description ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-blue-400 focus:bg-white'}`}
+                className={`w-full px-5 md:px-6 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 text-sm md:text-base ${errors.description ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-blue-400 focus:bg-white'}`}
                 {...register('description', { required: "Description is required", minLength: { value: 5, message: "Too short" } })}
               />
               {errors.description && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14} /> {errors.description.message}</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8">
               {/* Image Preview & Upload */}
               <div>
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Update Image</label>
@@ -161,7 +163,7 @@ const UpdateQuestion = () => {
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Points / Value</label>
                 <input
                   type="number"
-                  className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-black text-2xl text-slate-700"
+                  className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-black text-xl md:text-2xl text-slate-700 h-20 md:h-auto"
                   {...register('value', { required: "Required" })}
                 />
               </div>
@@ -170,13 +172,13 @@ const UpdateQuestion = () => {
             {/* Options */}
             <div className="mb-10">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Modify Options</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[1, 2, 3, 4].map((num) => (
                   <div key={num} className="relative">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-slate-300">{num}.</span>
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-slate-300 text-sm">{num}.</span>
                     <input
                       type="text"
-                      className="w-full pl-12 pr-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-bold text-slate-700"
+                      className="w-full pl-12 pr-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-bold text-slate-700 text-sm md:text-base"
                       {...register(`option${num}`, { required: true })}
                     />
                   </div>
@@ -185,16 +187,16 @@ const UpdateQuestion = () => {
             </div>
 
             {/* Correct Answer Section */}
-            <div className="bg-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-100">
-              <div className="flex items-center gap-4">
-                <CheckCircle2 size={32} />
+            <div className="bg-blue-600 rounded-[1.5rem] md:rounded-3xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-100">
+              <div className="flex items-center gap-4 text-center md:text-left flex-col md:flex-row">
+                <CheckCircle2 size={32} className="shrink-0" />
                 <div>
-                  <h4 className="font-black uppercase tracking-tight">Correct Answer</h4>
-                  <p className="text-blue-100 text-xs font-medium">Which option is the actual solution?</p>
+                  <h4 className="font-black uppercase tracking-tight text-sm md:text-base">Correct Answer</h4>
+                  <p className="text-blue-100 text-[10px] md:text-xs font-medium">Which option is the actual solution?</p>
                 </div>
               </div>
               <select
-                className="bg-blue-700 border border-blue-500 px-6 py-3 rounded-xl font-black text-white focus:ring-2 focus:ring-white outline-none cursor-pointer min-w-[180px]"
+                className="w-full md:w-auto bg-blue-700 border border-blue-500 px-6 py-3 rounded-xl font-black text-white focus:ring-2 focus:ring-white outline-none cursor-pointer min-w-[180px]"
                 {...register('correctOption', { required: true })}
               >
                 <option value="1">Option 1</option>
@@ -209,7 +211,7 @@ const UpdateQuestion = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 active:scale-95"
             >
               {isSubmitting ? "Updating..." : <><Save size={18} /> Update Database</>}
             </button>

@@ -66,9 +66,11 @@ const App = () => {
           <Route path='/login' element={<Login />}/>
           <Route path='/register' element={<Register />}/>
           <Route path='/game' element={<Login />}/>
-          <Route path='/leaderboard-a' element={<Login />}/>
-          <Route path='/leaderboard-b' element={<Login />}/>
-          <Route path='/leaderboard-c' element={<Login />}/>
+          <Route path='/leaderboard' element={<Login />}>
+            <Route index element={<Login />}/>
+            <Route path='total-score' element={<Login />}/>
+            <Route path='total-attempts' element={<Login />}/>
+          </Route>
           <Route path='/update' element={<Login />}/>
           <Route path='/profile' element={<Login />}/>
           <Route path='/u/:userId' element={<Login />}/>
