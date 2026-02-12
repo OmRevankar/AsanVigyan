@@ -26,7 +26,16 @@ const UpdateQuestion = () => {
 
   // Initial Fetch
   useEffect(() => {
-    dispatch(fetchQuestion({ uid }));
+    dispatch(fetchQuestion({ uid }))
+      .unwrap()
+      .then(() => { })
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+      })
   }, [dispatch, uid]);
 
   // Sync Form with Fetched Data
@@ -99,8 +108,8 @@ const UpdateQuestion = () => {
             </h1>
             <p className="text-slate-500 font-medium italic mt-1">Editing UID: <span className="text-blue-600 font-mono not-italic">{uid}</span></p>
           </div>
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => navigate('/all-questions')}
             className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors mb-2"
           >
@@ -110,16 +119,16 @@ const UpdateQuestion = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-10">
-            
+
             {/* Description */}
             <div className="mb-8">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Question Description</label>
-              <textarea 
+              <textarea
                 rows="3"
                 className={`w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-bold text-slate-700 ${errors.description ? 'border-red-200 focus:border-red-400' : 'border-transparent focus:border-blue-400 focus:bg-white'}`}
-                {...register('description', { required: "Description is required", minLength: { value: 5, message: "Too short" }})}
+                {...register('description', { required: "Description is required", minLength: { value: 5, message: "Too short" } })}
               />
-              {errors.description && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14}/> {errors.description.message}</p>}
+              {errors.description && <p className="mt-2 text-red-500 text-xs font-bold flex items-center gap-1"><AlertCircle size={14} /> {errors.description.message}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -127,9 +136,9 @@ const UpdateQuestion = () => {
               <div>
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Update Image</label>
                 <div className="relative group h-44 rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 overflow-hidden">
-                  <input 
-                    type="file" 
-                    accept="image/*" 
+                  <input
+                    type="file"
+                    accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     {...register('questionImage')}
                   />
@@ -150,10 +159,10 @@ const UpdateQuestion = () => {
               {/* Marks */}
               <div>
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Points / Value</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-black text-2xl text-slate-700"
-                  {...register('value', { required: "Required" })} 
+                  {...register('value', { required: "Required" })}
                 />
               </div>
             </div>
@@ -165,10 +174,10 @@ const UpdateQuestion = () => {
                 {[1, 2, 3, 4].map((num) => (
                   <div key={num} className="relative">
                     <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-slate-300">{num}.</span>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className="w-full pl-12 pr-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 focus:bg-white outline-none font-bold text-slate-700"
-                      {...register(`option${num}`, { required: true })} 
+                      {...register(`option${num}`, { required: true })}
                     />
                   </div>
                 ))}
@@ -184,7 +193,7 @@ const UpdateQuestion = () => {
                   <p className="text-blue-100 text-xs font-medium">Which option is the actual solution?</p>
                 </div>
               </div>
-              <select 
+              <select
                 className="bg-blue-700 border border-blue-500 px-6 py-3 rounded-xl font-black text-white focus:ring-2 focus:ring-white outline-none cursor-pointer min-w-[180px]"
                 {...register('correctOption', { required: true })}
               >
@@ -197,8 +206,8 @@ const UpdateQuestion = () => {
           </div>
 
           <div className="flex items-center justify-end gap-4 mt-8">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting}
               className="flex items-center gap-2 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 disabled:opacity-50 active:scale-95"
             >

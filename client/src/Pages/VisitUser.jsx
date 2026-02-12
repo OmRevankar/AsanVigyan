@@ -11,9 +11,19 @@ const VisitUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector(state => state.otheruser.userData);
+  const auth = useSelector(state => state.user.isAuthenticated);
 
   useEffect(() => {
-    dispatch(fetchOtherUser({ userId }));
+    dispatch(fetchOtherUser({ userId }))
+    .unwrap()
+    .then(() => {})
+    .catch((e) => {
+      if(auth){
+        setTimeout(()=>{
+          window.location.reload();
+        },1000)
+      }
+    })
   }, [dispatch, userId]);
 
   const formatDOB = (dob) => {

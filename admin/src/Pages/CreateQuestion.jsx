@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createQuestion } from '../Slices/questionSlice';
 import { useNavigate } from 'react-router-dom';
 import { ImagePlus, Save, LayoutList, CheckCircle2, AlertCircle, Tag } from 'lucide-react';
@@ -9,6 +9,7 @@ const CreateQuestion = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
+  const auth = useSelector((state) => state.admin.isAuthenticated);
 
   const {
     register,
@@ -52,7 +53,13 @@ const CreateQuestion = () => {
         reset();
         navigate('/q/all-questions');
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+      });
   };
 
   return (

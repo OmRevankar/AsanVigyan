@@ -19,11 +19,12 @@ import robot from '../Assets/robot.png'
 
 const Update = () => {
     const avatars = {
-        astronaut, bear, chicken, giraffe, knight, 
+        astronaut, bear, chicken, giraffe, knight,
         meerkat, ninja, panda, rabbit, robot
     };
 
     const userData = useSelector(state => state.user.userData);
+    const auth = useSelector(state => state.user.isAuthenticated);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -55,7 +56,7 @@ const Update = () => {
         formData.append("fullName", data.fullName);
         formData.append("username", data.username);
         formData.append("avatar", data.avatar); // Sending avatar name string
-        
+
         if (data.password) formData.append("password", data.password);
 
         dispatch(updateUser(formData))
@@ -64,7 +65,11 @@ const Update = () => {
                 navigate('/profile');
             })
             .catch((err) => {
-                console.error(err);
+                if (auth) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000)
+                }
             });
     };
 
@@ -91,7 +96,7 @@ const Update = () => {
                     {/* Avatar Selection Card */}
                     <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center">
                         <h2 className="text-sm font-bold text-purple-600 uppercase tracking-widest mb-6">Choose Your Avatar</h2>
-                        
+
                         {/* Current Selection Preview */}
                         <div className="size-32 rounded-full overflow-hidden border-4 border-purple-50 shadow-inner bg-slate-100 mb-8">
                             <img
@@ -108,11 +113,10 @@ const Update = () => {
                                     key={name}
                                     type="button"
                                     onClick={() => setValue('avatar', name)}
-                                    className={`relative size-12 rounded-xl overflow-hidden border-2 transition-all ${
-                                        selectedAvatar === name 
-                                        ? 'border-purple-600 scale-110 shadow-md shadow-purple-100' 
-                                        : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
-                                    }`}
+                                    className={`relative size-12 rounded-xl overflow-hidden border-2 transition-all ${selectedAvatar === name
+                                            ? 'border-purple-600 scale-110 shadow-md shadow-purple-100'
+                                            : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
+                                        }`}
                                 >
                                     <img src={img} alt={name} className="w-full h-full object-cover" />
                                     {selectedAvatar === name && (
