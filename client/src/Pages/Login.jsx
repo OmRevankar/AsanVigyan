@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../Slices/userSlice';
 import { useNavigate, Link } from 'react-router-dom'
-import { Lock, User, Loader2, EyeOff, Eye, AlertCircle } from 'lucide-react'; // Icons for professional touch
+import { Lock, User, Loader2, EyeOff, Eye, AlertCircle } from 'lucide-react'; 
 
 const Login = () => {
     const {
@@ -36,14 +36,17 @@ const Login = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        /* Added py-8 to ensure there is breathing room if the card is taller than the screen on mobile */
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-8">
+            
             {/* Login Card */}
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-purple-100/50 p-8 border border-slate-100">
+            {/* Changed p-8 to p-6 md:p-8 for better spacing on tiny screens */}
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-purple-100/50 p-6 md:p-8 border border-slate-100">
                 
                 {/* Header */}
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-slate-800">Welcome Back</h2>
-                    <p className="text-slate-500 mt-2 text-sm">Please enter your details to sign in</p>
+                    <p className="text-slate-500 mt-2 text-sm px-2">Please enter your details to sign in</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -75,7 +78,7 @@ const Login = () => {
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input
-                                type={showPassword ? 'text' : 'password'} // Dynamic Type
+                                type={showPassword ? 'text' : 'password'} 
                                 placeholder='••••••••'
                                 {...register('password', {
                                     pattern: {
@@ -85,7 +88,6 @@ const Login = () => {
                                 })}
                                 className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-50 outline-none transition-all"
                             />
-                            {/* Toggle Button */}
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
@@ -94,15 +96,14 @@ const Login = () => {
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
-                        {errors.password && <p className="text-xs text-red-500"><AlertCircle size={14}/>{errors.password.message}</p>}
+                        {errors.password && (
+                            /* Added flex items-center to prevent icon/text misalignment on small screens */
+                            <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                                <AlertCircle size={14}/>
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
-
-                    {/* Forgot Password Link (Visual Placeholder) */}
-                    {/* <div className="flex justify-end">
-                        <button type="button" className="text-xs font-semibold text-purple-600 hover:text-purple-700">
-                            Forgot password?
-                        </button>
-                    </div> */}
 
                     {/* Submit Button */}
                     <button 

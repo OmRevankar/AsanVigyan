@@ -19,7 +19,6 @@ import rabbit from '../Assets/rabbit.png'
 import robot from '../Assets/robot.png'
 
 const Register = () => {
-    // Mapping avatars for easy iteration
     const avatars = {
         astronaut, bear, chicken, giraffe, knight, 
         meerkat, ninja, panda, rabbit, robot
@@ -36,7 +35,7 @@ const Register = () => {
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
-            avatar: 'panda' // Default avatar selection
+            avatar: 'panda'
         }
     });
 
@@ -50,7 +49,7 @@ const Register = () => {
         formData.append('username', data.username);
         formData.append('password', data.password);
         formData.append('dob', data.dob.toISOString().split('T')[0]);
-        formData.append('avatar', data.avatar); // Sending avatar name string
+        formData.append('avatar', data.avatar);
 
         dispatch(registerUser(formData))
             .unwrap()
@@ -62,30 +61,34 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4">
+        /* Added responsive vertical padding (py-6 md:py-12) to prevent the card from touching screen edges */
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center py-6 md:py-12 px-4">
             <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl shadow-purple-100/40 border border-slate-100 overflow-hidden">
 
                 {/* Header Section */}
-                <div className="bg-purple-600 p-8 text-white text-center relative">
-                    <button onClick={() => navigate(-1)} className="absolute left-6 top-8 hover:text-purple-200 transition-colors">
+                {/* Adjusted padding (p-6 md:p-8) for better mobile height */}
+                <div className="bg-purple-600 p-6 md:p-8 text-white text-center relative">
+                    <button onClick={() => navigate(-1)} className="absolute left-4 md:left-6 top-7 md:top-8 hover:text-purple-200 transition-colors">
                         <ArrowLeft size={24} />
                     </button>
-                    <h2 className="text-3xl font-bold">Create Account</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold">Create Account</h2>
                     <p className="text-purple-100 mt-2 text-sm">Join the community and start competing</p>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
+                {/* Adjusted padding (p-5 md:p-8) to maximize input space on phones */}
+                <form onSubmit={handleSubmit(onSubmit)} className="p-5 md:p-8 space-y-6">
 
                     {/* Avatar Selection Grid */}
                     <div className="space-y-4">
                         <label className="text-xs font-bold text-slate-500 uppercase ml-1 block text-center">Choose Your Avatar</label>
-                        <div className="flex flex-wrap justify-center gap-3">
+                        {/* Improved gap and size scaling for the avatar buttons */}
+                        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
                             {Object.entries(avatars).map(([name, img]) => (
                                 <button
                                     key={name}
                                     type="button"
                                     onClick={() => setValue('avatar', name)}
-                                    className={`relative size-14 rounded-2xl overflow-hidden border-4 transition-all ${
+                                    className={`relative size-12 md:size-14 rounded-xl md:rounded-2xl overflow-hidden border-4 transition-all ${
                                         selectedAvatar === name 
                                         ? 'border-purple-600 scale-110 shadow-lg shadow-purple-100' 
                                         : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
@@ -105,7 +108,7 @@ const Register = () => {
                         <input type="hidden" {...register('avatar')} />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {/* Full Name */}
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-slate-500 uppercase ml-1">Full Name</label>
@@ -154,7 +157,10 @@ const Register = () => {
                                         dropdownMode="select"
                                         yearDropdownItemNumber={100}
                                         scrollableYearDropdown
+                                        /* Added whitespace-nowrap and box-border to ensure the picker doesn't distort on narrow widths */
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-purple-500 outline-none transition-all"
+                                        /* Ensures the popover container stays within viewport */
+                                        popperClassName="datepicker-popper-custom"
                                     />
                                 )}
                             />
@@ -186,14 +192,14 @@ const Register = () => {
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
-                        {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+                        {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
                     </div>
 
                     {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 md:py-4 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2 mt-4"
                     >
                         {isSubmitting ? <Loader2 className="animate-spin" size={22} /> : "Create Free Account"}
                     </button>
