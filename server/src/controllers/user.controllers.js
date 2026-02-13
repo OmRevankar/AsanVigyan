@@ -236,7 +236,7 @@ const fetchUser = asyncHandler(async (req, res) => {
 
     // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
 
-    console.log("HI inside cotroller");
+    // console.log("HI inside cotroller");
 
     let userInfo
 
@@ -308,7 +308,7 @@ const fetchUser = asyncHandler(async (req, res) => {
 const fetchOtherUser = asyncHandler(async (req, res) => {
 
     // return res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
-    console.log("HIII")
+    // console.log("HIII")
     const { userId } = req.body;
 
     if (!userId || userId.trim() == "")

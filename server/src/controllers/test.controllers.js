@@ -31,7 +31,7 @@ const beginTest = asyncHandler(async (req, res) => {
         }
     ])
 
-    console.log(questions);
+    // console.log(questions);
 
     if (!questions)
         return res.status(400).json(new ApiError(400, "Failed to fetch questions"));
@@ -233,7 +233,7 @@ const submitTest = asyncHandler(async (req, res) => {
 
     ]);
 
-    console.log("Find Test : ", findTest);
+    // console.log("Find Test : ", findTest);
 
     if (!findTest)
         return res.status(400).json(new ApiError(400, "Failed to create Test instance"));
@@ -317,7 +317,7 @@ const fetchTest = asyncHandler(async (req, res) => {
 
 const fetchAll = asyncHandler(async (req, res) => {
 
-    console.log("HI in con")
+    // console.log("HI in con")
 
     const test = await Test.aggregate([
         {

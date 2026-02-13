@@ -23,12 +23,12 @@ const createQuestion = asyncHandler(async (req, res) => {
     // console.log(typeof(options))
     let parsedOptions;
     parsedOptions = typeof (options) == "string" ? JSON.parse(options) : options;
-    console.log("hi");
+    // console.log("hi");
 
-    console.log(typeof (parsedCorrectOption), typeof (parsedValue), typeof (parsedOptions));
-    console.log(parsedOptions);
-    console.log(parsedCorrectOption);
-    console.log(parsedValue)
+    // console.log(typeof (parsedCorrectOption), typeof (parsedValue), typeof (parsedOptions));
+    // console.log(parsedOptions);
+    // console.log(parsedCorrectOption);
+    // console.log(parsedValue)
 
     if (!description || !category || Number.isNaN(parsedCorrectOption) || Number.isNaN(value)) {
         if (req.file?.path) fs.unlinkSync(req.file?.path);
