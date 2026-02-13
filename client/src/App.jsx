@@ -12,7 +12,7 @@ import { fetchUser } from './Slices/userSlice.jsx'
 import Update from './Pages/Update.jsx'
 import Profile from './Pages/Profile.jsx'
 import VisitUser from './Pages/VisitUser.jsx'
-import LeaderboardLayout from './Pages/LEaderboardLayout.jsx'
+import LeaderboardLayout from './Pages/LeaderboardLayout.jsx'
 import ScrollToTop from './Components/ScrollToTop.jsx'
 
 const App = () => {
