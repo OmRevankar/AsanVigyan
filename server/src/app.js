@@ -15,7 +15,8 @@ const app = express();
 //     credentials : true,
 // } ))
 
-const allowedOrigins = process.env.CORS_ORIGIN.split(",");
+const originString = process.env.CORS_ORIGIN;
+const allowedOrigins = originString.split(",");
 
 app.use(cors({
     origin : function(origin,callback){
