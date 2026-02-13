@@ -21,7 +21,7 @@ const Home = () => {
           className="text-center mb-10 md:mb-16 z-10"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs md:text-sm font-bold mb-6 tracking-wide uppercase">
-            <Sparkles size={14} /> New Challenges Daily
+            <Sparkles size={14} /> PLAY N LEARN
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[1.1]">
             Ready for a <br />

@@ -30,18 +30,26 @@ const User = () => {
 
   useEffect(() => {
     const data = { userId };
+
     dispatch(fetchUser(data))
       .unwrap()
       .then(() => { })
       .catch((e) => {
+        console.log("HIIIIIIIIII 1")
         if (auth) {
           setTimeout(() => {
             window.location.reload();
           }, 1000)
         }
+      });
+
+    dispatch(fetchUserTestHistory(data))
+    .unwrap()
+      .then(() => { })
+      .catch((e) => {
       })
-    dispatch(fetchUserTestHistory(data));
-  }, [dispatch, userId]);
+
+  }, []);
 
   const toggleTest = (id) => {
     setExpandedTestId(expandedTestId === id ? null : id);
@@ -65,8 +73,8 @@ const User = () => {
         {/* USER PROFILE CARD */}
         <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden mb-8 md:mb-10">
           <div className="bg-slate-900 p-6 md:p-8 text-white flex flex-col md:flex-row items-center gap-6 md:gap-8">
-            <div className="relative shrink-0">
-              <img src={avatarFunction(user.avatar)} alt="" className="size-24 md:size-32 rounded-2xl md:rounded-3xl object-cover border-4 border-slate-700 shadow-2xl" />
+            <div className="relative shrink-0 rounded-full">
+              <img src={avatarFunction(user.avatar)} alt="" className="size-24 md:size-32 rounded-full md:rounded-full object-cover border-4 border-slate-700 shadow-2xl" />
               <div className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 bg-purple-500 p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-lg">
                 <Trophy size={16} className="md:w-5 md:h-5" />
               </div>

@@ -7,6 +7,8 @@ const initialState = {
     isLoading : true,
 };
 
+const errorSt = ["Access token absent in browser","Expired Access token present in browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"];
+
 export const fetchUser = createAsyncThunk(
     '/admin/fetch-user',
 
@@ -47,12 +49,15 @@ const userSlice = createSlice({
         .addCase(fetchUser.rejected , (state,action) => {
             state.isLoading = false;
             state.userData = {};
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(fetchUser.fulfilled , (state,action) => {
             state.isLoading = true;
             state.userData = action.payload.data[0];
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
     }
 });

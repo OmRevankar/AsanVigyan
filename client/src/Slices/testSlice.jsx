@@ -10,6 +10,8 @@ const initialState = {
     isLoading : true
 };
 
+const errorSt = ["No access Token present in the Browser => User hasn't logged in","Expired Access token present in Browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"]
+
 export const startTest = createAsyncThunk(
     '/test/start',
 
@@ -110,12 +112,15 @@ const testSlice = createSlice({
         })
         .addCase(startTest.rejected,(state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(startTest.fulfilled,(state,action) => {
             state.isLoading = false;
             state.questionData = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
 
         .addCase(submitTest.pending,(state,action) => {
@@ -123,7 +128,10 @@ const testSlice = createSlice({
         })
         .addCase(submitTest.rejected,(state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(submitTest.fulfilled,(state,action) => {
             state.isLoading = false;
@@ -137,12 +145,15 @@ const testSlice = createSlice({
         .addCase(fetchUserTestHistory.rejected,(state,action) => {
             state.isLoading = false;
             state.testHistory = [];
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(fetchUserTestHistory.fulfilled,(state,action) => {
             state.isLoading = false;
             state.testHistory = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
     }
 });

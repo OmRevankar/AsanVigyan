@@ -7,6 +7,8 @@ const initialState = {
     isLoading : true
 };
 
+const errorSt = ["No access Token present in the Browser => User hasn't logged in","Expired Access token present in Browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"]
+
 export const fetchOtherUser = createAsyncThunk(
     '/otheruser/fetch',
 
@@ -46,12 +48,15 @@ const otheruserSlice = createSlice({
         })
         .addCase(fetchOtherUser.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(fetchOtherUser.fulfilled , (state,action) => {
             state.isLoading = false;
             state.userData = action.payload.data[0];
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
     }
 })

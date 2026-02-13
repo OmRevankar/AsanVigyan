@@ -77,7 +77,7 @@ const App = () => {
               <Route path='total-score' element={<Login />} />
               <Route path='highest-attempts' element={<Login />} />
             </Route>
-            <Route path='/u/:userId' element={<User />} />
+            <Route path='/u/:userId' element={<Login />} />
             <Route path='*' element={<Login />} />
           </Routes>
       }

@@ -8,6 +8,8 @@ const initialState = {
     isLoading : true
 };
 
+const errorSt = ["Access token absent in browser","Expired Access token present in browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"];
+
 export const fetchAllQuestions = createAsyncThunk(
     '/question/fetch-all',
 
@@ -224,12 +226,15 @@ const questionSlice = createSlice({
         })
         .addCase(fetchAllQuestions.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(fetchAllQuestions.fulfilled , (state,action) => {
             state.isLoading = false;
             state.questionData = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
 
         .addCase(createQuestion.pending , (state,action) => {
@@ -237,7 +242,10 @@ const questionSlice = createSlice({
         })
         .addCase(createQuestion.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(createQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
@@ -250,7 +258,10 @@ const questionSlice = createSlice({
         })
         .addCase(updateQuestion.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(updateQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
@@ -263,7 +274,10 @@ const questionSlice = createSlice({
         })
         .addCase(deleteQuestion.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(deleteQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
@@ -276,12 +290,15 @@ const questionSlice = createSlice({
         })
         .addCase(fetchQuestion.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(fetchQuestion.fulfilled , (state,action) => {
             state.isLoading = false;
             state.singleQuestion = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
     }
 });

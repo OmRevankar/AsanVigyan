@@ -57,11 +57,11 @@ const VisitUser = () => {
         {/* Profile Hero Card */}
         <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
           {/* Banner */}
-          <div className="h-32 md:h-44 bg-gradient-to-br from-purple-600 via-purple-500 to-indigo-600 relative">
+          <div className="h-32 md:h-32 bg-gradient-to-br from-purple-600 via-purple-500 to-indigo-600 relative">
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
           </div>
           
-          <div className="px-6 md:px-10 pb-10">
+          <div className="px-6 md:px-10 pb-10 pt-8">
             <div className="relative flex flex-col md:flex-row items-center md:items-end gap-5 md:gap-8 -mt-16 md:-mt-20 mb-10 text-center md:text-left">
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }} 
@@ -71,7 +71,7 @@ const VisitUser = () => {
                 <img 
                   src={avatarFunction(userData.avatar)} 
                   alt={userData.username} 
-                  className="size-32 md:size-44 rounded-[2rem] object-cover ring-[10px] ring-white shadow-2xl bg-white" 
+                  className="size-32 md:size-44 rounded-full object-cover ring-[10px] ring-white shadow-2xl bg-white" 
                 />
                 <div className="absolute -bottom-2 -right-2 bg-green-500 size-6 md:size-8 border-4 border-white rounded-full"></div>
               </motion.div>
@@ -142,7 +142,7 @@ const VisitUser = () => {
                <div className="bg-white/20 p-3 rounded-2xl w-fit mx-auto mb-4 backdrop-blur-md">
                  <Trophy size={32} />
                </div>
-               <h4 className="text-xl md:text-2xl font-black">Challenge {userData.username.split(' ')[0]}</h4>
+               <h4 className="text-xl md:text-2xl font-black">Challenge {userData.username}</h4>
                <p className="text-purple-100 text-sm mt-2 font-medium">Can you beat their high score of {userData.highScore}?</p>
                <button 
                  onClick={() => navigate('/game')} 

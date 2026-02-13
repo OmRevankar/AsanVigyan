@@ -8,6 +8,8 @@ const initialState = {
     isAuthenticated : false
 };
 
+const errorSt = ["Access token absent in browser","Expired Access token present in browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"];
+
 //login
 //fetch
 //update
@@ -128,13 +130,12 @@ const adminSlice = createSlice({
         .addCase(fetchAdmin.rejected , (state,action) => {
             state.isLoading = false;
             state.isAuthenticated = false;
-            console.error(action.payload);
         })
         .addCase(fetchAdmin.fulfilled , (state,action) => {
             state.isLoading = false;
             state.isAuthenticated = true;
             state.adminData = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
 
         .addCase(loginAdmin.pending , (state,action) => {
@@ -144,7 +145,6 @@ const adminSlice = createSlice({
             state.isLoading = false;
             state.isAuthenticated = false;
             toast.error(action.payload);
-            console.error(action.payload);
         })
         .addCase(loginAdmin.fulfilled , (state,action) => {
             state.isLoading = false;
@@ -172,7 +172,10 @@ const adminSlice = createSlice({
         })
         .addCase(updateAdmin.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(updateAdmin.fulfilled , (state,action) => {
             state.isLoading = false;

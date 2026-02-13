@@ -8,6 +8,7 @@ const initialState = {
     isAuthenticated : false
 };
 
+const errorSt = ["No access Token present in the Browser => User hasn't logged in","Expired Access token present in Browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"]
 
 //services
 export const registerUser = createAsyncThunk(
@@ -187,7 +188,6 @@ const userSlice = createSlice({
         .addCase(fetchUser.rejected , (state,action) => {
             state.isLoading = false;
             state.userData = {};
-            console.log(action.payload);
             // localStorage.setItem("isLoggedIn","false");
             state.isAuthenticated = false;
         })
@@ -204,7 +204,10 @@ const userSlice = createSlice({
         })
         .addCase(updateUser.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(updateUser.fulfilled , (state,action) => {
             state.isLoading = false;

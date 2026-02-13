@@ -9,6 +9,9 @@ const initialState = {
     isLoading : true
 };
 
+const errorSt = ["No access Token present in the Browser => User hasn't logged in","Expired Access token present in Browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"]
+
+
 export const highScore = createAsyncThunk(
     '/leaderboard/high-score',
 
@@ -95,12 +98,15 @@ const leaderboardSlice = createSlice({
         })
         .addCase(highScore.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(highScore.fulfilled , (state,action) => {
             state.isLoading = false;
             state.highScore = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
 
         .addCase(totalScore.pending , (state,action) => {
@@ -108,24 +114,30 @@ const leaderboardSlice = createSlice({
         })
         .addCase(totalScore.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(totalScore.fulfilled , (state,action) => {
             state.isLoading = false;
             state.totalScore = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
         .addCase(totalAttempts.pending , (state,action) => {
             state.isLoading = true
         })
         .addCase(totalAttempts.rejected , (state,action) => {
             state.isLoading = false;
-            toast.error(action.payload);
+            if(errorSt.includes(action.payload))
+                toast.error("Try to Login Again")
+            else
+                toast.error(action.payload);
         })
         .addCase(totalAttempts.fulfilled , (state,action) => {
             state.isLoading = false;
             state.totalAttempts = action.payload.data;
-            toast.success(action.payload.message);
+            // toast.success(action.payload.message);
         })
     }
 });

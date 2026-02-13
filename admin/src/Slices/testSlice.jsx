@@ -10,6 +10,8 @@ const initialState = {
     isLoading: true
 };
 
+const errorSt = ["Access token absent in browser","Expired Access token present in browser","Expired Access token present in Browser : TokenExpiredError :)","Token present in Browser but undefined"];
+
 export const fetchUserTestHistory = createAsyncThunk(
     '/test/fetch-user-test-history',
 
@@ -210,12 +212,15 @@ const testSlice = createSlice({
             .addCase(fetchUserTestHistory.rejected, (state, action) => {
                 state.isLoading = false;
                 // state.userTestHistory = [];
-                toast.error(action.payload);
+                if(errorSt.includes(action.payload))
+                    toast.error("Try to Login Again")
+                else
+                    toast.error(action.payload);
             })
             .addCase(fetchUserTestHistory.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.userTestHistory = action.payload.data;
-                toast.success(action.payload.message);
+                // toast.success(action.payload.message);
             })
 
             .addCase(fetchAll.pending, (state, action) => {
@@ -223,12 +228,15 @@ const testSlice = createSlice({
             })
             .addCase(fetchAll.rejected, (state, action) => {
                 state.isLoading = false;
-                toast.error(action.payload);
+                if(errorSt.includes(action.payload))
+                    toast.error("Try to Login Again")
+                else
+                    toast.error(action.payload);
             })
             .addCase(fetchAll.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.testHistory = action.payload.data;
-                toast.success(action.payload.message);
+                // toast.success(action.payload.message);
             })
 
             .addCase(fetchTest.pending, (state, action) => {
@@ -236,12 +244,15 @@ const testSlice = createSlice({
             })
             .addCase(fetchTest.rejected, (state, action) => {
                 state.isLoading = false;
-                toast.error(action.payload);
+                if(errorSt.includes(action.payload))
+                    toast.error("Try to Login Again")
+                else
+                    toast.error(action.payload);
             })
             .addCase(fetchTest.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.testData = action.payload.data[0];
-                toast.success(action.payload.message);
+                // toast.success(action.payload.message);
             })
     }
 });
