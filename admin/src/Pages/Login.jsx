@@ -25,7 +25,7 @@ const Login = () => {
       "password": data.password
     };
 
-    dispatch(loginAdmin(postData))
+    return dispatch(loginAdmin(postData))
       .unwrap()
       .then(() => {
         reset();

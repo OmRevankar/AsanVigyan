@@ -55,7 +55,7 @@ const userSlice = createSlice({
                 toast.error(action.payload);
         })
         .addCase(fetchUser.fulfilled , (state,action) => {
-            state.isLoading = true;
+            state.isLoading = false;
             state.userData = action.payload.data[0];
             // toast.success(action.payload.message);
         })

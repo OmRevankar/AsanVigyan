@@ -14,6 +14,7 @@ const User = () => {
   const user = useSelector(state => state.user.userData);
   const testHistory = useSelector(state => state.test.userTestHistory);
   const auth = useSelector((state) => state.admin.isAuthenticated);
+  const loading = useSelector((state) => state.test.isLoading);
 
   const [expandedTestId, setExpandedTestId] = useState(null);
 
@@ -64,6 +65,17 @@ const User = () => {
       default: break;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+          <p className="text-slate-400 font-black uppercase tracking-widest text-sm">Loading Profile</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">

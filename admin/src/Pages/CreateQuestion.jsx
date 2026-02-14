@@ -47,7 +47,7 @@ const CreateQuestion = () => {
     ];
     formData.append("options", JSON.stringify(options));
 
-    dispatch(createQuestion(formData))
+    return dispatch(createQuestion(formData))
       .unwrap()
       .then(() => {
         reset();

@@ -10,6 +10,7 @@ import { avatarFunction } from '../Helper/avatarSelector';
 const LeaderboardA = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.leaderboard.highScore);
+  const loading = useSelector((state) => state.leaderboard.isLoading);
   const auth = useSelector((state) => state.admin.isAuthenticated);
 
   useEffect(() => {
@@ -24,6 +25,31 @@ const LeaderboardA = () => {
         }
       })
   }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <Navbar />
+
+        {/* Secondary Admin Navigation */}
+        <div className="bg-white border-b border-slate-100 sticky top-0 z-20">
+          <div className="max-w-screen mx-auto overflow-x-auto no-scrollbar">
+            <LeaderboardNavbar />
+          </div>
+        </div>
+
+        {/* Centered Loader */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+            <p className="text-slate-400 font-black uppercase tracking-widest text-sm">
+              Loading Leaderboard
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -117,7 +143,7 @@ const LeaderboardA = () => {
 
                       {/* Score display for Mobile (hidden on desktop) */}
                       <div className="sm:hidden text-right shrink-0">
-                         <span className="text-lg font-black text-slate-800 tracking-tight">
+                        <span className="text-lg font-black text-slate-800 tracking-tight">
                           {item.score.toLocaleString()}
                         </span>
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Points</p>

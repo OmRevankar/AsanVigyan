@@ -83,10 +83,10 @@ const UpdateQuestion = () => {
     ];
     formData.append("options", JSON.stringify(options));
 
-    dispatch(updateQuestion(formData))
+    return dispatch(updateQuestion(formData))
       .unwrap()
       .then(() => {
-        navigate('/all-questions');
+        navigate('/q/all-questions');
       })
       .catch((e) => {
         if (auth) {

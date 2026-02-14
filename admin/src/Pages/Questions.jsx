@@ -49,6 +49,7 @@ const Questions = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const questionData = useSelector(state => state.question.questionData);
+    const loading = useSelector(state => state.question.isLoading);
 
     const [isOpen, setIsOpen] = useState(false);
     const [seletedQUid, setSelectedQUid] = useState();
@@ -93,6 +94,17 @@ const Questions = () => {
             dispatch(search({ key: value }));
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+                    <p className="text-slate-400 font-black uppercase tracking-widest text-sm">Loading Questions</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">

@@ -10,22 +10,23 @@ import { avatarFunction } from '../Helper/avatarSelector';
 const Home = () => {
   const dispatch = useDispatch();
   const testHistory = useSelector(state => state.test.testHistory);
+  const loading = useSelector(state => state.test.isLoading);
   const [expandedId, setExpandedId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const auth = useSelector((state) => state.admin.isAuthenticated);
 
   useEffect(() => {
     dispatch(fetchAll())
-    .unwrap()
-    .then(() => {})
-    .catch((e) => {
-      if(auth){
-        setTimeout(()=>{
-          window.location.reload();
-        },1000)
-      }
-    })
-    
+      .unwrap()
+      .then(() => { })
+      .catch((e) => {
+        if (auth) {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+      })
+
   }, [dispatch]);
 
   const toggleExpand = (id) => {
@@ -49,7 +50,7 @@ const Home = () => {
     const value = e.target.value;
     setSearchTerm(value);
     if (value === "") {
-      dispatch(fetchAll()); 
+      dispatch(fetchAll());
     } else {
       dispatch(searchFullName({ keyword: value }));
     }
@@ -57,14 +58,25 @@ const Home = () => {
 
   const handleSort = (type) => {
     switch (type) {
-      case 'user': dispatch(sortByFullName({cat:'all'})); break;
-      case 'latest': dispatch(sortByLatest({cat:'all'})); break;
-      case 'oldest': dispatch(sortByOldest({cat:'all'})); break;
-      case 'desc': dispatch(sortByMarksDesc({cat:'all'})); break;
-      case 'asc': dispatch(sortByMarksAscend({cat:'all'})); break;
+      case 'user': dispatch(sortByFullName({ cat: 'all' })); break;
+      case 'latest': dispatch(sortByLatest({ cat: 'all' })); break;
+      case 'oldest': dispatch(sortByOldest({ cat: 'all' })); break;
+      case 'desc': dispatch(sortByMarksDesc({ cat: 'all' })); break;
+      case 'asc': dispatch(sortByMarksAscend({ cat: 'all' })); break;
       default: break;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+          <p className="text-slate-400 font-black uppercase tracking-widest text-sm">Loading Test Activity</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -72,7 +84,7 @@ const Home = () => {
 
       {/* Adjusted padding: px-4 for mobile, px-6 for desktop */}
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
-        
+
         {/* Dashboard Header Stats: grid-cols-1 by default, md:grid-cols-3 for desktop */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
           <div className="bg-white p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">

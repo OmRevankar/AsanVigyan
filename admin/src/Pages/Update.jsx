@@ -43,7 +43,7 @@ const Update = () => {
     if (data.password) formData.append('password', data.password);
     if (data.profileImage?.[0]) formData.append('profileImage', data.profileImage[0]);
 
-    dispatch(updateAdmin(formData))
+    return dispatch(updateAdmin(formData))
       .unwrap()
       .then(() => {
         reset();
