@@ -58,7 +58,9 @@ const Profile = () => {
   const formatDOB = (dob) => dob ? new Date(dob).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: "numeric" }) : 'N/A';
   const formatTime = (time) => time ? new Date(time).toLocaleString(undefined, { hour: "numeric", minute: "2-digit" }) : "N/A";
 
-  const toggleTest = (id) => setExpandedTestId(expandedTestId === id ? null : id);
+  const toggleTest = (id) => {
+  setExpandedTestId(prevId => prevId === id ? null : id);
+};
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -125,14 +127,15 @@ const Profile = () => {
 
         <div className="space-y-4">
           {testHistory.map((test, i) => {
-            const isExpanded = expandedTestId === test.uid;
+            const currentId = test.uid || test._id || i;
+            const isExpanded = expandedTestId === currentId;
 
             return (
-              <div key={test.uid} className={`bg-white rounded-[1.5rem] shadow-sm border transition-all duration-300 ${isExpanded ? 'border-purple-200 ring-4 ring-purple-50' : 'border-slate-100'}`}>
+              <div key={currentId} className={`bg-white rounded-[1.5rem] shadow-sm border transition-all duration-300 ${isExpanded ? 'border-purple-200 ring-4 ring-purple-50' : 'border-slate-100'}`}>
                 
                 {/* Clickable Header */}
                 <div 
-                  onClick={() => toggleTest(test.uid)}
+                  onClick={() => toggleTest(currentId)}
                   className="p-4 md:p-6 flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-3 md:gap-5">
