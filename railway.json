@@ -6,6 +6,8 @@
   },
   "deploy": {
     "rootDirectory": "server",
+    "installCommand": "npm install",
+    "startCommand": "node src/index.js",
     "healthcheckPath": "/health",
     "restartPolicyType": "ON_FAILURE"
   }
