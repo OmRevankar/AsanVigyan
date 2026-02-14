@@ -52,6 +52,7 @@ app.use('/api/v1/user',userRouter);
 app.use('/api/v1/admin',adminRouter);
 app.use('/api/v1/question',questionRouter);
 app.use('/api/v1/test',testRouter);
-app.use('/api/v1/leaderboard',leaderboardRouter)
+app.use('/api/v1/leaderboard',leaderboardRouter);
+app.get('/health', (req, res) => res.sendStatus(200));
 
 export default app

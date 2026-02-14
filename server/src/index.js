@@ -3,9 +3,9 @@ import app from "./app.js"
 import connectDB from './db/index.js'
 import 'dotenv/config';
 
-dotenv.config({
-    path : './.env'
-})
+// dotenv.config({
+//     path : './.env'
+// })
 
 connectDB()
 .then(()=>{
@@ -15,7 +15,7 @@ connectDB()
         throw error;
     } )
 
-    app.listen(process.env.PORT || 5001 , "0.0.0.0" , ()=>{
+    app.listen(process.env.PORT || 8080 , "0.0.0.0" , ()=>{
         console.log("Server is listening on PORT :", process.env.PORT);
     })    
 
