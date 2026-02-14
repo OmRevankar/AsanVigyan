@@ -102,7 +102,8 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite : "none"
     };
 
     const adminData = await Admin.findById(admin?._id).select("-password -refreshToken");
