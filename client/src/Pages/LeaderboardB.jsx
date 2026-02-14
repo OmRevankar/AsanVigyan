@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { totalScore } from '../Slices/leaderboardSlice';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Crown, Zap, ChevronRight } from 'lucide-react';
+import { Trophy, Crown, Zap, ChevronRight, Loader2 } from 'lucide-react';
 import LeaderboardHead from '../Components/LeaderboardHead';
 import Navbar from '../Components/Navbar';
 import { avatarFunction } from '../Helper/avatarSelector';
@@ -13,6 +13,7 @@ const LeaderboardB = () => {
   const leaderboard = useSelector((state) => state.leaderboard.totalScore);
   const user = useSelector((state) => state.user.userData);
   const auth = useSelector((state) => state.user.isAuthenticated);
+  const loading = useSelector((state) => state.leaderboard.isLoading);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +32,22 @@ const LeaderboardB = () => {
   const handleUserClick = (targetUserId) => {
     targetUserId === user._id ? navigate(`/profile`) : navigate(`/u/${targetUserId}`);
   };
+
+  if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Navbar />
+                <LeaderboardHead />
+
+                <div className="flex flex-col items-center justify-center py-32">
+                    <Loader2 className="animate-spin text-purple-600 mb-4" size={48} />
+                    <p className="text-slate-500 font-bold tracking-wide">
+                        Loading Leaderboard...
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">

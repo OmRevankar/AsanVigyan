@@ -24,7 +24,7 @@ const Login = () => {
             "password": data.password
         }
         
-        dispatch(loginUser(formData))
+        return dispatch(loginUser(formData))
             .unwrap()
             .then(() => {
                 reset();
@@ -109,14 +109,10 @@ const Login = () => {
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
+                        // value={isSubmitting ? "Signing in . . ." : "Sign In" }
                         className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-purple-200 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="animate-spin" size={20} />
-                                <span>Signing in...</span>
-                            </>
-                        ) : "Sign In"}
+                        {isSubmitting ? <Loader2 className="animate-spin" size={22} /> : "Sign In"}
                     </button>
                 </form>
 

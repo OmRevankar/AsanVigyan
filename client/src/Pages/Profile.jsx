@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserTestHistory } from '../Slices/testSlice';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../Slices/userSlice';
-import { X, OctagonMinus, Check, LogOut, Edit3, Award, Zap, Target, Calendar, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, OctagonMinus, Check, LogOut, Edit3, Award, Zap, Target, Calendar, Clock, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import Navbar from '../Components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { avatarFunction } from '../Helper/avatarSelector';
@@ -46,12 +46,14 @@ const Profile = () => {
   const userData = useSelector(state => state.user.userData);
   const testHistory = useSelector(state => state.test.testHistory);
   const auth = useSelector(state => state.user.isAuthenticated);
+  const userLoading = useSelector(state => state.user.isLoading);
+  const testLoading = useSelector(state => state.test.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => { 
+  useEffect(() => {
     dispatch(fetchUserTestHistory()).unwrap().catch((e) => {
-      if(auth) setTimeout(() => { window.location.reload(); }, 1000);
+      if (auth) setTimeout(() => { window.location.reload(); }, 1000);
     });
   }, [dispatch, auth]);
 
@@ -59,8 +61,90 @@ const Profile = () => {
   const formatTime = (time) => time ? new Date(time).toLocaleString(undefined, { hour: "numeric", minute: "2-digit" }) : "N/A";
 
   const toggleTest = (id) => {
-  setExpandedTestId(prevId => prevId === id ? null : id);
-};
+    setExpandedTestId(prevId => prevId === id ? null : id);
+  };
+
+  if (userLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+
+        <div className="flex flex-col items-center justify-center py-32">
+          <Loader2 className="animate-spin text-purple-600 mb-4" size={48} />
+          <p className="text-slate-500 font-bold tracking-wide">
+            Loading Your Profile . . .
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (testLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-20">
+        <Navbar />
+        <LogoutDialogue isOpen={isOpen} setIsOpen={setIsOpen} />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6 md:mt-10">
+          {/* Profile Header Card */}
+          <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100 mb-8">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 md:gap-10">
+
+              {/* Avatar Section */}
+              <div className="relative shrink-0">
+                <div className="absolute -inset-1 bg-gradient-to-tr from-purple-600 to-indigo-400 rounded-full blur opacity-20"></div>
+                <img src={avatarFunction(userData.avatar)} alt="avatar" className="relative size-28 md:size-36 rounded-full object-cover border-4 border-white shadow-md" />
+                <button onClick={() => navigate('/update')} className="absolute bottom-0 right-0 p-2.5 bg-white shadow-xl rounded-2xl border border-slate-100 text-purple-600 hover:scale-110 transition-transform">
+                  <Edit3 size={20} />
+                </button>
+              </div>
+
+              {/* User Info */}
+              <div className="flex-1 text-center lg:text-left space-y-3">
+                <div>
+                  <h1 className="text-2xl md:text-4xl font-black text-slate-800 tracking-tight">{userData.fullName}</h1>
+                  <p className="text-slate-400 font-bold text-sm md:text-base">@{userData.username}</p>
+                </div>
+
+                <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-4">
+                  <span className="flex items-center gap-1.5 px-4 py-1.5 bg-purple-50 text-purple-600 rounded-full text-xs md:text-sm font-bold">
+                    <Calendar size={14} /> {formatDOB(userData.dob)}
+                  </span>
+                  <button onClick={() => setIsOpen(true)} className="flex items-center gap-1.5 px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-xs md:text-sm font-bold hover:bg-red-100 transition-colors">
+                    <LogOut size={14} /> Logout
+                  </button>
+                </div>
+              </div>
+
+              {/* Stats Grid - Optimized for Mobile */}
+              <div className="grid grid-cols-3 gap-3 md:gap-4 w-full lg:w-auto mt-6 lg:mt-0">
+                {[
+                  { label: 'High Score', val: userData.highScore, icon: <Zap size={18} />, color: 'text-amber-500', bg: 'bg-amber-50' },
+                  { label: 'Tests', val: userData.totalAttempts, icon: <Target size={18} />, color: 'text-purple-600', bg: 'bg-purple-50' },
+                  { label: 'Points', val: userData.totalScore, icon: <Award size={18} />, color: 'text-blue-500', bg: 'bg-blue-50' }
+                ].map((stat, idx) => (
+                  <div key={idx} className="bg-slate-50/80 p-3 md:p-5 rounded-2xl text-center border border-slate-100">
+                    <div className={`mx-auto mb-2 size-8 md:size-10 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                      {stat.icon}
+                    </div>
+                    <p className="text-lg md:text-2xl font-black text-slate-800 leading-none">{stat.val}</p>
+                    <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mt-2 tracking-tighter">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center justify-center py-32">
+            <Loader2 className="animate-spin text-purple-600 mb-4" size={48} />
+            <p className="text-slate-500 font-bold tracking-wide">
+              Loading Your Test Activity . . .
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -71,7 +155,7 @@ const Profile = () => {
         {/* Profile Header Card */}
         <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100 mb-8">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 md:gap-10">
-            
+
             {/* Avatar Section */}
             <div className="relative shrink-0">
               <div className="absolute -inset-1 bg-gradient-to-tr from-purple-600 to-indigo-400 rounded-full blur opacity-20"></div>
@@ -80,14 +164,14 @@ const Profile = () => {
                 <Edit3 size={20} />
               </button>
             </div>
-            
+
             {/* User Info */}
             <div className="flex-1 text-center lg:text-left space-y-3">
               <div>
                 <h1 className="text-2xl md:text-4xl font-black text-slate-800 tracking-tight">{userData.fullName}</h1>
                 <p className="text-slate-400 font-bold text-sm md:text-base">@{userData.username}</p>
               </div>
-              
+
               <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-4">
                 <span className="flex items-center gap-1.5 px-4 py-1.5 bg-purple-50 text-purple-600 rounded-full text-xs md:text-sm font-bold">
                   <Calendar size={14} /> {formatDOB(userData.dob)}
@@ -119,10 +203,10 @@ const Profile = () => {
 
         {/* Test History Section */}
         <div className="flex items-center justify-between mb-6 px-2">
-            <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-              <Clock className="text-purple-600" /> Recent Activity
-            </h2>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testHistory.length} Sessions</span>
+          <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+            <Clock className="text-purple-600" /> Recent Activity
+          </h2>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testHistory.length} Sessions</span>
         </div>
 
         <div className="space-y-4">
@@ -132,9 +216,9 @@ const Profile = () => {
 
             return (
               <div key={currentId} className={`bg-white rounded-[1.5rem] shadow-sm border transition-all duration-300 ${isExpanded ? 'border-purple-200 ring-4 ring-purple-50' : 'border-slate-100'}`}>
-                
+
                 {/* Clickable Header */}
-                <div 
+                <div
                   onClick={() => toggleTest(currentId)}
                   className="p-4 md:p-6 flex items-center justify-between gap-4 cursor-pointer"
                 >
@@ -173,7 +257,7 @@ const Profile = () => {
                           <div key={qn.uid} className={`rounded-2xl border bg-white p-4 md:p-5 shadow-sm transition-all ${qn.status === 'correct' ? 'border-green-100' : qn.status === 'incorrect' ? 'border-red-100' : 'border-amber-100'}`}>
                             <div className="flex justify-between items-start gap-4 mb-4">
                               <p className="font-bold text-slate-700 text-sm md:text-base leading-snug">
-                                <span className="text-purple-400 mr-2">Q{j+1}.</span>{qn.question.description}
+                                <span className="text-purple-400 mr-2">Q{j + 1}.</span>{qn.question.description}
                               </p>
                               <div className="shrink-0 flex items-center gap-2 px-2 py-1 bg-slate-50 rounded-lg">
                                 <span className="text-[10px] md:text-xs font-black text-slate-500 whitespace-nowrap">{qn.score}/{qn.question.value}</span>
@@ -186,12 +270,12 @@ const Profile = () => {
                               {qn.question.options.map((opt) => {
                                 const isCorrect = opt.id === qn.question.correctOption;
                                 const isSelected = opt.id === qn.selectedOption;
-                                
+
                                 return (
                                   <div key={opt.id} className={`text-xs md:text-sm p-3 rounded-xl border flex justify-between items-center transition-all
-                                    ${isCorrect ? 'bg-green-50 border-green-200 text-green-800 font-bold' : 
-                                      isSelected && !isCorrect ? 'bg-red-50 border-red-200 text-red-800 font-bold' : 
-                                      'bg-slate-50/50 border-slate-100 text-slate-500'}`}>
+                                    ${isCorrect ? 'bg-green-50 border-green-200 text-green-800 font-bold' :
+                                      isSelected && !isCorrect ? 'bg-red-50 border-red-200 text-red-800 font-bold' :
+                                        'bg-slate-50/50 border-slate-100 text-slate-500'}`}>
                                     <span className="pr-2">{opt.text}</span>
                                     {isCorrect && <Check size={14} className="shrink-0" />}
                                     {isSelected && !isCorrect && <X size={14} className="shrink-0" />}

@@ -61,7 +61,7 @@ const Update = () => {
 
         if (data.password) formData.append("password", data.password);
 
-        dispatch(updateUser(formData))
+        return dispatch(updateUser(formData))
             .unwrap()
             .then(() => {
                 navigate('/profile');

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { totalAttempts } from '../Slices/leaderboardSlice';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Crown, Zap, ChevronRight, Activity } from 'lucide-react';
+import { Trophy, Crown, Zap, ChevronRight, Activity, Loader2 } from 'lucide-react';
 import LeaderboardHead from '../Components/LeaderboardHead';
 import Navbar from '../Components/Navbar';
 import { avatarFunction } from '../Helper/avatarSelector';
@@ -14,6 +14,7 @@ const LeaderboardC = () => {
   const leaderboard = useSelector((state) => state.leaderboard.totalAttempts);
   const user = useSelector((state) => state.user.userData);
   const auth = useSelector((state) => state.user.isAuthenticated);
+  const loading = useSelector((state) => state.leaderboard.isLoading);
 
   useEffect(() => {
     dispatch(totalAttempts())
@@ -30,22 +31,38 @@ const LeaderboardC = () => {
     targetUserId === user._id ? navigate(`/profile`) : navigate(`/u/${targetUserId}`);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+        <LeaderboardHead />
+
+        <div className="flex flex-col items-center justify-center py-32">
+          <Loader2 className="animate-spin text-purple-600 mb-4" size={48} />
+          <p className="text-slate-500 font-bold tracking-wide">
+            Loading Leaderboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       <Navbar />
       <LeaderboardHead />
 
       <div className="max-w-4xl mx-auto px-4 mt-6 md:mt-12">
-        
+
         {/* Podium Section - Persistence Theme */}
         <div className="flex items-end justify-center gap-2 md:gap-4 mb-12 pt-8 md:pt-12 px-1">
           {topThree.map((item, index) => {
             const isFirst = index === 0;
             const isCurrentUser = item._id === user._id;
 
-            const config = isFirst 
+            const config = isFirst
               ? { order: 'order-2', height: 'h-40 md:h-56', size: 'size-24 md:size-32', icon: "https://cdn-icons-png.flaticon.com/512/2583/2583344.png", border: "border-amber-400" }
-              : index === 1 
+              : index === 1
                 ? { order: 'order-1', height: 'h-32 md:h-44', size: 'size-20 md:size-28', icon: "https://cdn-icons-png.flaticon.com/512/2583/2583319.png", border: "border-slate-300" }
                 : { order: 'order-3', height: 'h-28 md:h-36', size: 'size-18 md:size-24', icon: "https://cdn-icons-png.flaticon.com/512/2583/2583434.png", border: "border-orange-300" };
 
@@ -53,8 +70,8 @@ const LeaderboardC = () => {
               <div key={item._id} className={`flex flex-col items-center flex-1 max-w-[120px] md:max-w-[200px] ${config.order}`}>
                 <div className="relative mb-3 group cursor-pointer" onClick={() => handleUserClick(item._id)}>
                   {isFirst && (
-                    <motion.div 
-                      animate={{ scale: [1, 1.1, 1] }} 
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
                       transition={{ repeat: Infinity, duration: 3 }}
                       className="absolute -top-7 left-1/2 -translate-x-1/2 z-10"
                     >
@@ -70,7 +87,7 @@ const LeaderboardC = () => {
                   <span className={`absolute -bottom-1 right-0 text-5xl md:text-7xl font-black leading-none select-none opacity-10 ${isCurrentUser ? 'text-white' : 'text-slate-200'}`}>
                     {index + 1}
                   </span>
-                  
+
                   <p className={`font-black truncate w-full px-1 text-[10px] md:text-lg relative z-10 mb-1 ${isCurrentUser ? 'text-white' : 'text-slate-800'}`}>
                     {item.username}
                   </p>
@@ -117,10 +134,10 @@ const LeaderboardC = () => {
 
                   <div className="col-span-7 flex items-center gap-3 md:gap-5">
                     <div className="relative shrink-0">
-                      <img 
-                        src={avatarFunction(item.avatar)} 
-                        className='rounded-2xl size-10 md:size-14 object-cover border-2 border-white shadow-sm' 
-                        alt="" 
+                      <img
+                        src={avatarFunction(item.avatar)}
+                        className='rounded-2xl size-10 md:size-14 object-cover border-2 border-white shadow-sm'
+                        alt=""
                       />
                       {isCurrentUser && (
                         <div className="absolute -top-1 -right-1 size-3 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>

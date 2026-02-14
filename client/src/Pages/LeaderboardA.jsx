@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { highScore } from '../Slices/leaderboardSlice';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Crown, Zap, ChevronRight } from 'lucide-react';
+import { Trophy, Crown, Zap, ChevronRight, Loader2 } from 'lucide-react';
 import LeaderboardHead from '../Components/LeaderboardHead';
 import Navbar from '../Components/Navbar';
 import { avatarFunction } from '../Helper/avatarSelector';
@@ -13,6 +13,7 @@ const LeaderboardA = () => {
     const leaderboard = useSelector((state) => state.leaderboard.highScore);
     const auth = useSelector((state) => state.user.isAuthenticated);
     const user = useSelector((state) => state.user.userData);
+    const loading = useSelector((state) => state.leaderboard.isLoading);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,13 +31,30 @@ const LeaderboardA = () => {
         targetUserId === user._id ? navigate(`/profile`) : navigate(`/u/${targetUserId}`);
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Navbar />
+                <LeaderboardHead />
+
+                <div className="flex flex-col items-center justify-center py-32">
+                    <Loader2 className="animate-spin text-purple-600 mb-4" size={48} />
+                    <p className="text-slate-500 font-bold tracking-wide">
+                        Loading Leaderboard...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             <Navbar />
             <LeaderboardHead />
 
             <div className="max-w-4xl mx-auto px-4 mt-6 md:mt-12">
-                
+
                 {/* Podium Section - Optimized for all screens */}
                 <div className="flex items-end justify-center gap-2 md:gap-4 mb-12 pt-8 md:pt-12 px-1">
                     {topThree.map((item, index) => {
@@ -45,9 +63,9 @@ const LeaderboardA = () => {
                         const isCurrentUser = item.userId === user._id;
 
                         // Visual configuration based on rank
-                        const config = isFirst 
+                        const config = isFirst
                             ? { order: 'order-2', height: 'h-40 md:h-56', size: 'size-24 md:size-32', icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583344.png', border: 'border-amber-400' }
-                            : index === 1 
+                            : index === 1
                                 ? { order: 'order-1', height: 'h-32 md:h-44', size: 'size-20 md:size-28', icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583319.png', border: 'border-slate-300' }
                                 : { order: 'order-3', height: 'h-28 md:h-36', size: 'size-18 md:size-24', icon: 'https://cdn-icons-png.flaticon.com/512/2583/2583434.png', border: 'border-orange-300' };
 
@@ -55,8 +73,8 @@ const LeaderboardA = () => {
                             <div key={item.userId} className={`flex flex-col items-center flex-1 max-w-[120px] md:max-w-[200px] ${config.order}`}>
                                 <div className="relative mb-3 group cursor-pointer" onClick={() => handleUserClick(item.userId)}>
                                     {isFirst && (
-                                        <motion.div 
-                                            animate={{ y: [0, -8, 0] }} 
+                                        <motion.div
+                                            animate={{ y: [0, -8, 0] }}
                                             transition={{ repeat: Infinity, duration: 2 }}
                                             className="absolute -top-8 left-1/2 -translate-x-1/2 z-10"
                                         >

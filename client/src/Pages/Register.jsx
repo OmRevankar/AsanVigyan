@@ -51,7 +51,7 @@ const Register = () => {
         formData.append('dob', data.dob.toISOString().split('T')[0]);
         formData.append('avatar', data.avatar);
 
-        dispatch(registerUser(formData))
+        return dispatch(registerUser(formData))
             .unwrap()
             .then(() => {
                 reset();

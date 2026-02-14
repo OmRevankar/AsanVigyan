@@ -12,6 +12,7 @@ const VisitUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector(state => state.otheruser.userData);
+  const loading = useSelector(state => state.otheruser.isLoading);
   const auth = useSelector(state => state.user.isAuthenticated);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const VisitUser = () => {
     });
   };
 
-  if (!userData) return (
+  if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>

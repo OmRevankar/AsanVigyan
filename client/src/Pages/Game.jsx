@@ -357,7 +357,7 @@ const Game = () => {
 
           <div className="mt-6 md:mt-8 mb-8 md:mb-10 p-6 md:p-8 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] border-2 border-dashed border-slate-200">
               <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Score</p>
-              <p className="text-5xl md:text-6xl font-black text-purple-600">{testResp?.score || 0}</p>
+              <p className="text-5xl md:text-6xl font-black text-purple-600">{testResp?.score || ". . ." }</p>
           </div>
 
           <button 
